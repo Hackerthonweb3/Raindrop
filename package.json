@@ -1,0 +1,29 @@
+{
+  "name": "raindrop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.3.2",
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@orbisclub/orbis-sdk": "^0.3.30",
+    "@rainbow-me/rainbowkit": "^0.5.1",
+    "@unlock-protocol/unlock-js": "^0.26.6",
+    "ethers": "^5.7.0",
+    "framer-motion": "^7.3.2",
+    "next": "12.2.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "wagmi": "^0.6.4"
+  },
+  "devDependencies": {
+    "eslint": "8.23.0",
+    "eslint-config-next": "12.2.5"
+  }
+}
