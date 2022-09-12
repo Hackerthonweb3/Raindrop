@@ -20,6 +20,7 @@ const Header = () => {
                 borderRadius='20px'
                 onClick={handleConnect}
                 colorScheme='blue'
+                px='40px'
             >Connect Wallet</Button>
         </Flex>
     )

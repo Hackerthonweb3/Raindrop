@@ -1,8 +1,15 @@
-<svg width="1711" height="1174" viewBox="0 0 1711 1174" fill="none" xmlns="http://www.w3.org/2000/svg">
-<mask id="mask0_15_353" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="1711" height="1174">
-<rect width="1711" height="1174" fill="#D9D9D9"/>
+<svg width="1728" height="1713" viewBox="0 0 1728 1713" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_24_918" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="1728" height="1713">
+<rect width="1728" height="1713" fill="#D9D9D9"/>
 </mask>
-<g mask="url(#mask0_15_353)">
-<ellipse rx="994.415" ry="671" transform="matrix(1 0 0 -1 855.415 945)" fill="#0085AB"/>
+<g mask="url(#mask0_24_918)">
+<ellipse rx="919.5" ry="714.381" transform="matrix(1 0 0 -1 864 90.381)" fill="url(#paint0_linear_24_918)"/>
+<ellipse rx="994.415" ry="671" transform="matrix(1 0 0 -1 864.001 1475)" fill="#0085AB"/>
 </g>
+<defs>
+<linearGradient id="paint0_linear_24_918" x1="919.5" y1="0" x2="919.5" y2="1550.98" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0085AB"/>
+<stop offset="0.5625" stop-color="#05CD99" stop-opacity="0"/>
+</linearGradient>
+</defs>
 </svg>
