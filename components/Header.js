@@ -7,7 +7,7 @@ const Header = () => {
     const router = useRouter();
 
     const handleConnect = () => {
-        //router.push('App');
+        router.push('app');
     }
 
     return (

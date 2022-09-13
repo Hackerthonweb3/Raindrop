@@ -1,9 +1,11 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import { RainbowKitProvider, getDefaultWallets, ConnectButton } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { ChakraProvider } from '@chakra-ui/react'
 import { publicProvider } from 'wagmi/providers/public';
-import Header from '../components/Header';
+import Application from '../components/Application';
+import { theme } from '../utils/theme'
+import { OrbisProvider } from '../utils/context/orbis';
 
 const { chains, provider } = configureChains(
     [
@@ -35,9 +37,12 @@ export default function Home() {
     return (
         <WagmiConfig client={wagmiClient}>
             <RainbowKitProvider chains={chains}>
-                <ChakraProvider>
-                    <Header />
-                    TEST
+                <ChakraProvider theme={theme}>
+                    <OrbisProvider>
+
+                        <Application />
+
+                    </OrbisProvider>
                 </ChakraProvider>
             </RainbowKitProvider>
         </WagmiConfig>
