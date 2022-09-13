@@ -15,7 +15,7 @@ const Profile = (props) => {
 
     const usingAddress = props.address || address
 
-    const { user } = props.address ? useOrbisUser(usingAddress) : useOrbis()
+    const { user } = useOrbis()//props.address ? useOrbisUser(usingAddress) : useOrbis()
 
     const handleEditProfile = () => {
         setEditing(true);
