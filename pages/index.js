@@ -122,7 +122,7 @@ export default function Home() {
 
       <Flex mt='80px' alignItems='center' flexDirection='column'>
         <Text fontFamily='inter' color='white'>Check out these</Text>
-        <Text fontSize='4xl' mb='20px' color='brand.400' pb='5px' fontWeight='bold' borderBottom='3px solid rgba(0, 133, 171, 1)'>Popular Profiles</Text>
+        <Text fontSize='4xl' mb='20px' color='brand.500' pb='5px' fontWeight='bold' borderBottom='3px solid rgba(0, 133, 171, 1)'>Popular Profiles</Text>
         <Flex alignItems='center' justifyContent='space-between' w='100%' p='0 20px'>
           <div style={{ cursor: 'pointer', marginLeft: '20px', transform: 'rotate(45deg)', width: '30px', height: '30px', borderBottom: '5px solid #F9D520', borderLeft: '5px solid #F9D520' }} />
           <Image src='profile1.svg' maxH='550px' />
@@ -263,7 +263,7 @@ export default function Home() {
                 px='20px'
                 py='5px'
                 key={i}
-                backgroundColor={selected == i ? 'brand.400' : 'none'}
+                backgroundColor={selected == i ? 'brand.500' : 'none'}
                 color={selected == i ? 'white' : 'black'}
                 onClick={() => setSelected(i)}
               >{option}</Box>)}
@@ -405,8 +405,8 @@ export default function Home() {
           <Image src='Raindrops.png' position='absolute' left='120px' maxH='400px' />
           <Flex flexDirection='column' alignItems='center'>
             <Text fontSize='4xl' color='white' mb='20px' maxW='60%' align='center'>Join hundreds of other creators on Raindrop</Text>
-            <Button w='50%' borderRadius='100px' mb='15px' fontSize='3xl' py='10px' h='auto' color='brand.400' colorScheme='brandLight' fontWeight='normal'>Support Creators</Button>
-            <Button w='50%' borderRadius='100px' fontSize='3xl' py='10px' h='auto' fontWeight='normal' colorScheme='brand.400' border='3px solid rgba(209, 241, 238, 1)' color='rgba(209, 241, 238, 1)' >Contact Us</Button>
+            <Button w='50%' borderRadius='100px' mb='15px' fontSize='3xl' py='10px' h='auto' color='brand.500' colorScheme='brandLight' fontWeight='normal'>Support Creators</Button>
+            <Button w='50%' borderRadius='100px' fontSize='3xl' py='10px' h='auto' fontWeight='normal' colorScheme='brand.500' border='3px solid rgba(209, 241, 238, 1)' color='rgba(209, 241, 238, 1)' >Contact Us</Button>
           </Flex>
           <Image src='iPhone13.png' position='absolute' right='10px' maxW='400px' overflow='hidden' />
         </Flex>

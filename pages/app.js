@@ -32,7 +32,7 @@ const wagmiClient = createClient({
 });
 
 
-export default function Home() {
+export default function App() {
 
     return (
         <WagmiConfig client={wagmiClient}>
