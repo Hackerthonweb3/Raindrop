@@ -1,15 +1,14 @@
 import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Box } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
-import { subgraphURLs } from "../utils/constants";
-
 
 //TODO set lazy
 const ethers = require("ethers");
 const { WalletService } = require("@unlock-protocol/unlock-js");
-import { unlockAddress, time, currencies } from '../utils/constants';
-import { useOrbis } from "../utils/context/orbis";
-
+import { unlockAddress, time, currencies } from '../../utils/constants';
+import { useOrbis } from "../../utils/context/orbis";
+import { useWeb3Storage } from "../../utils/hooks/web3storage";
+import { FileUploader } from "react-drag-drop-files";
 
 const EditProfile = (props) => {
 
@@ -17,7 +16,8 @@ const EditProfile = (props) => {
     const [username, setUsername] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
-    const [locks, setLocks] = useState();
+    const [profilePicture, setProfilePicture] = useState(null);
+    const [cover, setCover] = useState(null);
 
     const { user, orbis, getOrbis } = useOrbis();
     const { address } = useAccount();
@@ -25,49 +25,53 @@ const EditProfile = (props) => {
     const provider = useProvider()
     const signer = useSigner();
     const { chain } = useNetwork();
+    const client = useWeb3Storage();
 
     const toast = useToast();
-
-    const getLocks = async () => {
-        console.log('Getting locks from subgraph...');
-        const subgraphData = await fetch(subgraphURLs[chain.id], {
-            method: 'POST',
-            contentType: 'application/json',
-            body: JSON.stringify(
-                {
-                    query: `{
-                        locks(where: {owner: "${address}"}) {
-                        id
-                        address
-                        price
-                        creationBlock
-                        tokenAddress
-                        expirationDuration
-                        maxNumberOfKeys
-                        version
-                        totalSupply
-                        }
-                    }`
-                }
-            )
-        })
-
-        setLocks((await subgraphData.json()).data.locks)
-    }
 
     const handleSave = async () => {
 
         //Save Profile
         if (tab == 0) {
-            if (username == '') {
-                //TODO set error message
-                return;
+
+            let newData = {}
+
+            if (profilePicture) {
+                newData.pfp = await client.put([profilePicture], {
+                    wrapWithDirectory: false
+                });
+
+                console.log('Stored file with cid:', newData.pfp);
+            } else if (user.details.profile?.pfp) {
+                newData.pfp = user.details.profile.pfp;
             }
 
-            const res = await orbis.updateProfile({
-                username: username,
-                description: description
-            })
+            if (cover) {
+                newData.cover = await client.put([cover], {
+                    wrapWithDirectory: false
+                });
+
+                console.log('Stored file with cid:', newData.cover);
+            } else if (user.details.profile?.cover) {
+                newData.cover = user.details.profile.cover;
+            }
+
+            if (username != '') {
+                newData.username = username;
+            } else if (user.username) {
+                newData.username = user.username;
+            }
+
+            if (description != '') {
+                newData.description = description;
+            } else if (user.details.profile?.description) {
+                newData.description = user.details.profile.description;
+            }
+
+            console.log('New data', newData);
+
+            const res = await orbis.updateProfile(newData)
+
             console.log('Orbis response', res);
 
             if (res.status != 200) {
@@ -86,8 +90,7 @@ const EditProfile = (props) => {
                 return;
             }
 
-
-            if (locks && locks.length == 0) {
+            if (!props.lock) {
                 console.log('Deploying');
                 const walletService = new WalletService(unlockAddress);
                 console.log(walletService);
@@ -99,7 +102,7 @@ const EditProfile = (props) => {
                 const tx = await walletService.createLock({
                     //address: unlockAddress[5],
                     publicLockVersion: 11,
-                    name: user.username,
+                    name: user.username + "  Raindrop", //Adding raindrop to be able to use it in subgraph (user could have other locks for other stuff)
                     maxNumberOfKeys: 0,
                     expirationDuration: time,
                     keyPrice: ethers.utils.parseEther(price).toString(),
@@ -113,15 +116,44 @@ const EditProfile = (props) => {
                     })*/
                 })
 
+                //TODO mint yourself an NFT (necessary to decrypt your own posts lol)
+                const key = await walletService.grantKey({
+                    lockAddress: '',
+                    recipient: address
+                })
+
                 console.log(tx)
+                //TODO reload data
             }
         }
 
     }
 
-    useEffect(() => {
-        getLocks();
-    }, [])
+    const test = async () => {
+        const walletService = new WalletService(unlockAddress);
+        console.log(walletService);
+
+        await walletService.connect(provider, signer.data);
+
+        const key = await walletService.grantKey({
+            lockAddress: '0xe86652Af35caC36535eb73625363d6CBcC4f4f09',
+            recipient: address,
+        }, (err, txHash) => {
+            console.log('Tx hash', txHash);
+        })
+
+        console.log('Key', key); //key is the tokenId returned
+    }
+
+    const handleProfilePicture = (file) => {
+        console.log('Files', file);
+        setProfilePicture(file)
+    }
+
+    const handleCover = (file) => {
+        console.log('Cover', file);
+        setCover(file)
+    }
 
     return (
         <Flex
@@ -176,9 +208,23 @@ const EditProfile = (props) => {
                                 onChange={e => setUsername(e.target.value)}
                             />
                             <FormLabel mt='20px' fontWeight='semibold' textAlign='center'>Profile photo</FormLabel>
-                            <Flex cursor='pointer' py='20px' border='1px solid' borderColor='brand.500' borderRadius='10px' w='50%' mx='auto' flexDirection='column' alignItems='center'>
-                                <Text fontWeight='semibold' noOfLines={2} w='60%' color='brand.500' align='center'>Add new profile photo</Text>
-                            </Flex>
+                            <FileUploader handleChange={handleProfilePicture} types={["JPG", "PNG"]}>
+                                <Flex
+                                    cursor='pointer'
+                                    py='20px'
+                                    border='1px solid'
+                                    borderColor='brand.500'
+                                    borderRadius='10px'
+                                    w='50%'
+                                    mx='auto'
+                                    flexDirection='column'
+                                    alignItems='center'
+                                    backgroundColor={profilePicture ? 'gray' : 'white'}
+                                >
+                                    <Text fontWeight='semibold' noOfLines={2} w='60%' color='brand.500' align='center'>Add new profile photo</Text>
+                                </Flex>
+                            </FileUploader>
+
                             <FormLabel mt='20px' fontWeight='semibold'>Profile description</FormLabel>
                             <Textarea
                                 variant='filled'
@@ -189,9 +235,13 @@ const EditProfile = (props) => {
                                 h='100px'
                             />
                             <FormLabel mt='20px' fontWeight='semibold'>Cover image</FormLabel>
-                            <Flex border='1px solid #E6E6E6' borderRadius='10px' p='8px' w='60%'>
-                                Add cover image
-                            </Flex>
+
+                            <FileUploader handleChange={handleCover} types={["JPG", "PNG"]}>
+                                <Flex border='1px solid #E6E6E6' borderRadius='10px' p='8px' w='60%'>
+                                    Add cover image
+                                </Flex>
+                            </FileUploader>
+
                             <Text fontSize='sm' color='#848484' mt='5px'>Recommended size 460 by 200 pixels</Text>
                         </FormControl>
                     </Flex>
@@ -215,7 +265,8 @@ const EditProfile = (props) => {
                 }
 
                 <Flex mt='10px'>
-                    <Button borderRadius='10px' mr='10px' px='50px' colorScheme='brand' onClick={handleSave}>{tab == 0 ? 'Save' : ((locks && locks.length == 0) ? 'Create membership' : 'Update membership')}</Button>
+                    <Button borderRadius='10px' mr='10px' px='50px' colorScheme='brand' onClick={test}>TEST</Button>
+                    <Button borderRadius='10px' mr='10px' px='50px' colorScheme='brand' onClick={handleSave}>{tab == 0 ? 'Save' : (!props.lock ? 'Create membership' : 'Update membership')}</Button>
                     <Button borderRadius='10px' px='50px' colorScheme='brandLight' color='brand.500' onClick={() => props.setEditing(false)}>Cancel</Button>
                 </Flex>
             </Flex>

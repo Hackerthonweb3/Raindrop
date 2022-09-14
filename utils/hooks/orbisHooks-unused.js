@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useOrbis } from "../context/orbis";
 
-export const useOrbisUser = (address) => {
+/*export*/ const useOrbisUser = (address) => {
 
     const [user, setUser] = useState(null);
     const { orbis } = useOrbis();

@@ -19,7 +19,7 @@ const Sidebar = (props) => {
     const { address } = useAccount();
 
     return (
-        <Flex overflow='hidden' flexDirection='column' alignItems='center' h='100vh' minW='250px' maxW='250px' borderRight='1px solid' borderColor='brand.400'>
+        <Flex position='fixed' overflow='hidden' flexDirection='column' alignItems='center' h='100vh' minW='250px' maxW='250px' borderRight='1px solid' borderColor='brand.400'>
             <Image src='Logo.svg' maxW='30%' m='20px' cursor='pointer' alignSelf='flex-start' />
             <Flex flexDirection='column' w='100%'>
                 <Flex color='brand.400' mt='30px' mx='25px' cursor='pointer' w='80%' pr='auto' borderRight='3px solid' borderColor='brand.400'>

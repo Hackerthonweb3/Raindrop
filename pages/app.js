@@ -6,13 +6,14 @@ import { publicProvider } from 'wagmi/providers/public';
 import Application from '../components/Application';
 import { theme } from '../utils/theme'
 import { OrbisProvider } from '../utils/context/orbis';
+import { useEffect } from 'react';
 
 const { chains, provider } = configureChains(
     [
         chain.polygon,
         chain.optimism,
         ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true'
-            ? [chain.goerli, chain.kovan, chain.rinkeby, chain.ropsten]
+            ? [chain.goerli]//, chain.kovan, chain.rinkeby, chain.ropsten]
             : []),
     ],
     [
@@ -33,6 +34,12 @@ const wagmiClient = createClient({
 
 
 export default function App() {
+
+    useEffect(() => {
+        window.ethereum.on('chainChanged', () => {
+            document.location.reload();
+        })
+    }, [])
 
     return (
         <WagmiConfig client={wagmiClient}>

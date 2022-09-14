@@ -1,7 +1,7 @@
-import Header from "../components/Header";
+import Header from "../components/layout/Header";
 import { ChakraProvider, Flex, Text, Image, Button, Input, Box, Spacer, Checkbox } from '@chakra-ui/react'
 import { useState } from "react";
-import Footer from "../components/Footer";
+import Footer from "../components/layout/Footer";
 import { theme } from '../utils/theme';
 
 //background: linear-gradient(90deg, #0085AB 0%, #2CB2C3 34.2%, #F9D520 69.77%, #D1D922 102.6%);
@@ -343,7 +343,7 @@ export default function Home() {
           >
             <Text sx={RainbowTextRed} fontSize='3xl'>Low transaction fees</Text>
             <div style={{ borderRight: '1px solid rgba(0, 133, 171, 1)', height: '70%' }} />
-            <Text fontSize='xl' maxW='40%' ontWeight='500' align='center' color='gray.400' >Content creators pay little to nothing on transaction fees by using multi L2 chains
+            <Text fontSize='xl' maxW='40%' fontWeight='500' align='center' color='gray.400' >Content creators pay little to nothing on transaction fees by using multi L2 chains
               (Polygon, Cronos, Celo, Gnosis)</Text>
           </Flex>
         </Flex>

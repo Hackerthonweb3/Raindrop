@@ -2,7 +2,7 @@ import { Button, ButtonGroup } from '@chakra-ui/react'
 const ethers = require("ethers");
 const { WalletService } = require("@unlock-protocol/unlock-js");
 import { useProvider, useSigner } from 'wagmi';
-import { unlockAddress } from '../utils/constants';
+import { unlockAddress } from '../../utils/constants';
 
 const Test = () => {
 
