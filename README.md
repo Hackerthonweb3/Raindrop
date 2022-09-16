@@ -1,34 +1,132 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🤝 **Raindrop**
 
-## Getting Started
+---
 
-First, run the development server:
+[![GitHub deployments](https://img.shields.io/github/deployments/Hackerthonweb3/Web3_Patreon/production?label=deployment&logo=vercel&style=flat-square&color=00a550&logoColor=00a550)](https://w3p.vercel.app)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Hackerthonweb3/Web3_Patreon/Build%20Pipeline?logo=github&style=flat-square&color=00a550&logoColor=00a550)](https://github.com/Hackerthonweb3/Web3_Patreon/actions/workflows/pipeline.yml)
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Try out the demo, which [is hosted live here!](https://raindrop-gold.vercel.app/)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 **Statement**
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+**We are eager to continue the project after the hackathon in order to actually launch it in the world.**
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## 🎬 **Pitch & Live Demo (Video)**
 
-## Learn More
+Raindrop offers creators a decentralized alternative to platform subscriptions sites like Patreon or Onlyfans. 
 
-To learn more about Next.js, take a look at the following resources:
+<p align='center'>
+    <a href='https://www.youtube.com/embed/MgAR8_WMgeE'>
+        <img src="https://www.youtube.com/watch?v=NflOaU6Kgss">
+    </a>
+</p>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 💬 **Problem**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+-   The tools creators use to engage with fans force them to be tied to certain platforms. Centralized membership platforms like Patreon and Onlyfans have too much power over content creators. Risks include:
+    -   Legacy payment methods with little flexibility
+    -   Being censored or de-platformed
+    -   User data is not portable. Migrating content and fan base to different platforms is difficult.
 
-## Deploy on Vercel
+## 💡 **Solution**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+-   **Build tools for creators to connect and engage with their fan base directly. We help creators access web3 technology to better connect with fans. Raindrop helps fans get direct and exclusive access to their favorite creators by leveraging web3 identity and payment technologies. Creators bypass the middleman and keep 100% ownership of their content.**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+    -   **1. Data Portability**
+        -   Creators content and fan base can be migrated to other platforms
+    -   **2. Membership community made easy**
+        -   Create communities at the touch of a button. Minimum knowledge of development is required to use Web3 technologies.
+    -   **3. Real time and transparent data visualization**
+        -   Visualization of on-chain data to help creators understand their communities.
+
+## 💻 **How We made**
+
+### Technological Implementation
+
+#### Tech Stack
+
+-   Front-End: NextJS, React, Typescript, Rainbowkit/Wagmi, Chakra
+-   Contracts: Unlock Protocol
+-   Back-End: Ceramic, Orbis, IPFS, Livepeer
+-   Technologies: We are deployed on Polygon and Optimism
+
+
+#### Data Portability
+
+-   Ceramic：We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with NextJS to easily onboard every kind of use in any platform.
+-   IPFS/Filecoin：To allow creators to do closed content with images on the decentralized networks. Also, to allow uploading of profile images on it.
+-   Livepeer(if possible)：To allow creators to do closed content with movies on the decentralized networks.  
+
+#### Membership community made easy
+
+-   Unlock：Subscription framework, using NFT as a proof of subscription to unlock exclusive creator streams.
+-   Polygon：To deploy SBTs to the blockchain for low gas prices to prove that a user has met a person because of low transaction cost and privacy by using ZK.
+-   Optimism：For creators to deploy membership NFT because of scalability.
+-   The Graph:To make Raindrop a multi-chain application and the subgraph may really help us to do that for good UI/UX experience for not only users but also developers in our team.
+-   EPNS(if possible)：It is used as a notification function for creator content’s update for fans.
+-   Tellor(if possible)：Allowing creator to conduct giveaways for their subscriber. 
+
+
+#### Real time and transparent data visualization
+
+-   ENS：It is used as one of the creator's profile information to increase their credibility.
+-   Sismo(if possible)：To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
+-   Worldcoin(if possible)：To prove that creators and fans is real human.
+
+
+## ✨ **Potential Impact**
+
+#### ① It will be a direct relationship between creators and fans.
+
+-   No platform to determine what content will or will not be allowed, no opaque algorithm to determine what content will rise or fall, and no inter-party payment platform that can withhold payments from creators based on arbitrary policy changes will accelerate the creator economy by coming into existence.
+
+#### ② Creators will be able to focus more on their creative activities.
+
+-   With traditional subscriptions, Twitch determines the subscription price and revenue sharing. If Twitch decides to cut back on compensation to creators, there is no easy way to move your community to another platform. With an Subscription NF, the NFT with the community is yours. No platform dictates how you interact with your fans.
+
+#### ③ A great alternative to existing web2 platforms!
+
+Having a well designed app/front-end giving creators the ability to token gate their premium content for it to be consume only by the fans financially supporting their work seems like a great alternative to existing web2 platforms!
+
+
+## 📓 **Appendix**
+
+### Our Product Roadmap
+
+#### ① Enhance the UX of creators' contents by making them compatible with a variety of content formats, including text, video, photos, and audio.
+
+How creative and unique:
+
+-   Having a well designed app/front-end giving creators the ability to token gate their premium a variety of decentralized contents by Livepeer, IPFS etc for it to be consume only by the fans financially supporting their work seems like a great alternative to existing web2 platforms!
+
+#### ② Adding a variety of utilities to the Subscription NFT will support a steady income for creators.
+
+How creative and unique
+
+-   There are numerous mechanics to align incentives for collectors and service providers like Scarce, Tiered Time-limited, Revokable, Refundable, Resettable, Locked up, Burned, Staked, Soulbound, Price-controlled Held custody of. However, there is still no platform that makes these easy for anyone to use.
+
+#### ③ Launch on Mobile App like iOS and Android
+
+How creative and unique:
+
+-   To make Web3Social's products a product market fit for consumers, it is necessary to achieve a better UX, and a mobile experience is essential to this. There are only a few projects in the industry that are able to combine data portability and mobile.
+
+### What We Learned
+
+-   
+-   
+
+### Team Members：
+
+-   Hidetaka Ko | Product Manager | We have been developing and operating Japan’s largest homestay matching service for 4 years as CEO/Co-Founder.
+-   0xYee | Full Stack Software Engineer | Working with a DAO the past 2 months.
+-   Jonathan Cruz | UI/UX Designer | Specialize in designing and developing user interfaces and 3D digital assets.
+
+
+### Resourses
+
+-   [Polygonscan]()
+-   [Medium]()
+-   [Twitter](https://twitter.com/raindropcreator)
+-   [Notion]()
