@@ -1,4 +1,4 @@
-# 🤝 **Web3 Patreon**
+# 🤝 **Raindrop**
 
 ---
 
@@ -46,44 +46,38 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 
 #### Tech Stack
 
--   Front-End: NextJS, React, Typescript, Rainbowkit/Wagmi
--   Contracts: Solidity
--   Back-End: Ceramic, Orbis, IPFS
--   Technologies: We are deployed on Polygon. We have ERC for test.
--   ZK: Sismo
-
-#### Use of Polygon：Deployed to Polygon to mint Subscription NFT
-
--   Why Polygon?：**The Web3 social experience must be as fast and cheap as Web2. Also, identity is about privacy. We thought Polygon, where ZK technology and other technologies are used, would be a good match for this as well.**
--   Detail Implementation：**The app consists in 2 smart contracts, one is an implementation of ERC1155 from Openzeppelin, with the Ownable library to manage permissions, the other is a simple ERC1155 factory, called "CreatorFactory" to deploy instances for each new registered creator, those instances keep track of patron subscriptions, expiry times, and tiers edition (tiers are not available in the frontend, but the contract has the feature)**
-
-smart contracts verifications for polygonscan:
--> [link](https://mumbai.polygonscan.com/address/0x0bcb61720c92e4e573e573daef8dc295d30a3ffb#code)
--> [link](https://mumbai.polygonscan.com/address/0x5887d5a7f9722fb2508fe7e9c93ac05fdbbc64ba#code)
-
-#### Use of Sismo：We used Sismo for attestation of creator
-
--   What is Sismo?：Sismo is a modular Attestations Protocol focused on decentralization, privacy and usability.
--   Why Sismo?：**When a fan becomes a fan of a creator or decides to pay for a subscription, they are always concerned about the creator's track record. However, in the traditional world, creators could lie; in the Web3 world, it is easier to prove track record because data can be put on the on-chain, but the problem at this time was that creators had to expose their own Wallet Address. Sismo solved this problem by allowing creators to prove their achievements in the form of badges without exposing their wallet addresses.**
--   Detail Implementation：
-
-#### Use of IPFS：We used IPFS to store the user's Avatar data and metadata
-
--   Why IPFS?：IPFS is stable and secure because of it's distributed structure
--   Detail Implementation： Upload images format for creators
+-   Front-End: NextJS, React, Typescript, Rainbowkit/Wagmi, Chakra
+-   Contracts: Unlock Protocol
+-   Back-End: Ceramic, Orbis, IPFS, Livepeer
+-   Technologies: We are deployed on Polygon and Optimism
 
 
+#### Data Portability
 
-#### Use of Orbis.SDK on Ceramic：For Gated community to discuss with your best creators & connect with your followers.
+-   Ceramic：We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with NextJS to easily onboard every kind of use in any platform.
+-   IPFS/Filecoin：To allow creators to do closed content with images on the decentralized networks. Also, to allow uploading of profile images on it.
+-   Livepeer(if possible)：To allow creators to do closed content with movies on the decentralized networks.  
+-   Tellor(if possible)：Allowing creator to conduct giveaways for their subscriber. 
 
--   What is Orbis.SDK on Ceramic：Ceramic is a mutable datastore tied to a DID, a wrapper for the Ceramic/Lit protocol that complements Ceramic and allows developers to focus on UI/UX.
--   Why Orbis.SDK on Ceramic?：Orbis offers UX benefits of not having to deal with wallet popups every time you post, follow, share etc. It should make for a much smoother experience for creators and collectors.
--   Detail Implementation：
+#### Membership community made easy
+
+-   Unlock：Subscription framework, using NFT as a proof of subscription to unlock exclusive creator streams.
+-   Polygon：To deploy SBTs to the blockchain for low gas prices to prove that a user has met a person because of low transaction cost and privacy by using ZK.
+-   Polygon：For creators to deploy membership NFT because of scalability.
+-   To make Raindrop a multi-chain application and the subgraph may really help us to do that for good UI/UX experience for not only users but also developers in our team.
+-   EPNS(if possible)：It is used as a notification function for creator content’s update for fans.
+
+
+#### Real time and transparent data visualization
+
+-   ENS：It is used as one of the creator's profile information to increase their credibility.
+-   Sismo(if possible)：To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
+-   Worldcoin(if possible)：To prove that creators and fans is real human.
 
 
 ### 3. Potential Impact
 
-#### ① It will be a direct relationship between creators and subscribers.
+#### ① It will be a direct relationship between creators and fans.
 
 -   No platform to determine what content will or will not be allowed, no opaque algorithm to determine what content will rise or fall, and no inter-party payment platform that can withhold payments from creators based on arbitrary policy changes will accelerate the creator economy by coming into existence.
 
@@ -96,12 +90,11 @@ smart contracts verifications for polygonscan:
 Having a well designed app/front-end giving creators the ability to token gate their premium content for it to be consume only by the fans financially supporting their work seems like a great alternative to existing web2 platforms!
 
 
-
 ## 📓 **Appendix**
 
 ### 5. Our Product Roadmap
 
-#### ① Enhance the UX of creators' submissions by making them compatible with a variety of content formats, including text, video, photos, and audio.
+#### ① Enhance the UX of creators' contents by making them compatible with a variety of content formats, including text, video, photos, and audio.
 
 How creative and unique:
 
@@ -121,22 +114,19 @@ How creative and unique:
 
 ### 6. What We Learned
 
--   That Ceramic and Orbis can save time in developing Web3Social.
--   Subscription NFT's Potential
+-   
+-   
 
-### 7. Team Members：Efforts were made from South America, Europe, the United States, and Japan. All are scheduled for ongoing development
+### 7. Team Members：
 
 -   Hidetaka Ko | Product Manager | We have been developing and operating Japan’s largest homestay matching service for 4 years as CEO/Co-Founder.
--   Asiya | Full Stack Software Engineer | I’m a SWE based between LA/NY, good with front end, like to build things.
--   O_t | Full Stack Software Engineer | In blockchain space since 2013, full stack+solidity developer and investor, co-organizer Ethereum Meetup Spain.
--   Taiki Ikeda | UI Designer | Fluent in English and Japanese.
+-   0xYee | Full Stack Software Engineer | Working with a DAO the past 2 months.
+-   Jonathan Cruz | UI/UX Designer | Specialize in designing and developing user interfaces and 3D digital assets.
+
 
 ### 8. Resourses
 
--   [Figma](https://www.figma.com/file/YJ8RSB0YWbRDTGxbsXVwdj/map?node-id=40%3A2)
--   [Notion](https://miro.com/app/board/uXjVOhnqrMI=/?share_link_id=453224520787)
--   [Miro](https://miro.com/app/board/uXjVOhnqrMI=/)
--   [Polygonscan①](https://mumbai.polygonscan.com/address/0x0bcb61720c92e4e573e573daef8dc295d30a3ffb#code)
--   [Polygonscan②](https://mumbai.polygonscan.com/address/0x5887d5a7f9722fb2508fe7e9c93ac05fdbbc64ba#code)
--   Medium:Coming soon
--   WhitePaper:Coming soon
+-   [Polygonscan]()
+-   [Medium]()
+-   [Twitter](https://twitter.com/raindropcreator)
+-   [Notion]()
