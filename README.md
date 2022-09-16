@@ -40,7 +40,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
     -   **3. Real time and transparent data visualization**
         -   Visualization of on-chain data to help creators understand their communities.
 
-## 🤔 **How We made **
+## 🤔 **How We made**
 
 ### 1. Technological Implementation
 
