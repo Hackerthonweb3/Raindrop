@@ -14,7 +14,7 @@ Try out the demo, which [is hosted live here!](https://raindrop-gold.vercel.app/
 
 ## 🎬 **Pitch & Live Demo (Video)**
 
-Raindrop offers creators a decentralized alternative to platform subscriptions sites like Patreon or Onlyfans. We help creators access web3 technology to better connect with fans. Raindrop helps fans get direct and exclusive access to their favorite creators by leveraging web3 identity and payment technologies. Creators bypass the middleman and keep 100% ownership of their content.
+Raindrop offers creators a decentralized alternative to platform subscriptions sites like Patreon or Onlyfans. 
 
 <p align='center'>
     <a href='https://www.youtube.com/embed/MgAR8_WMgeE'>
@@ -31,7 +31,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 
 ## 💡 **Solution**
 
--   **Build tools for creators to connect and engage with their fan base directly.**
+-   **Build tools for creators to connect and engage with their fan base directly. We help creators access web3 technology to better connect with fans. Raindrop helps fans get direct and exclusive access to their favorite creators by leveraging web3 identity and payment technologies. Creators bypass the middleman and keep 100% ownership of their content.**
 
     -   **1. Data Portability**
         -   Creators content and fan base can be migrated to other platforms
