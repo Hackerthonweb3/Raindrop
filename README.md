@@ -57,7 +57,6 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 -   Ceramic：We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with NextJS to easily onboard every kind of use in any platform.
 -   IPFS/Filecoin：To allow creators to do closed content with images on the decentralized networks. Also, to allow uploading of profile images on it.
 -   Livepeer(if possible)：To allow creators to do closed content with movies on the decentralized networks.  
--   Tellor(if possible)：Allowing creator to conduct giveaways for their subscriber. 
 
 #### Membership community made easy
 
@@ -66,6 +65,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 -   Optimism：For creators to deploy membership NFT because of scalability.
 -   The Graph:To make Raindrop a multi-chain application and the subgraph may really help us to do that for good UI/UX experience for not only users but also developers in our team.
 -   EPNS(if possible)：It is used as a notification function for creator content’s update for fans.
+-   Tellor(if possible)：Allowing creator to conduct giveaways for their subscriber. 
 
 
 #### Real time and transparent data visualization
