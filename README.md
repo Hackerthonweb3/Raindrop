@@ -40,7 +40,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
     -   **3. Real time and transparent data visualization**
         -   Visualization of on-chain data to help creators understand their communities.
 
-## 🤔 **How We made**
+## 💻 **How We made**
 
 ### Technological Implementation
 
@@ -75,7 +75,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 -   Worldcoin(if possible)：To prove that creators and fans is real human.
 
 
-## 🤔 **Potential Impact**
+## ✨ **Potential Impact**
 
 #### ① It will be a direct relationship between creators and fans.
 
