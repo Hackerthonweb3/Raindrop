@@ -42,7 +42,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 
 ## 🤔 **How We made**
 
-### 1. Technological Implementation
+### Technological Implementation
 
 #### Tech Stack
 
@@ -63,8 +63,8 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 
 -   Unlock：Subscription framework, using NFT as a proof of subscription to unlock exclusive creator streams.
 -   Polygon：To deploy SBTs to the blockchain for low gas prices to prove that a user has met a person because of low transaction cost and privacy by using ZK.
--   Polygon：For creators to deploy membership NFT because of scalability.
--   To make Raindrop a multi-chain application and the subgraph may really help us to do that for good UI/UX experience for not only users but also developers in our team.
+-   Optimism：For creators to deploy membership NFT because of scalability.
+-   The Graph:To make Raindrop a multi-chain application and the subgraph may really help us to do that for good UI/UX experience for not only users but also developers in our team.
 -   EPNS(if possible)：It is used as a notification function for creator content’s update for fans.
 
 
@@ -75,7 +75,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 -   Worldcoin(if possible)：To prove that creators and fans is real human.
 
 
-### 3. Potential Impact
+## 🤔 **Potential Impact**
 
 #### ① It will be a direct relationship between creators and fans.
 
@@ -92,7 +92,7 @@ Having a well designed app/front-end giving creators the ability to token gate t
 
 ## 📓 **Appendix**
 
-### 5. Our Product Roadmap
+### Our Product Roadmap
 
 #### ① Enhance the UX of creators' contents by making them compatible with a variety of content formats, including text, video, photos, and audio.
 
@@ -112,19 +112,19 @@ How creative and unique:
 
 -   To make Web3Social's products a product market fit for consumers, it is necessary to achieve a better UX, and a mobile experience is essential to this. There are only a few projects in the industry that are able to combine data portability and mobile.
 
-### 6. What We Learned
+### What We Learned
 
 -   
 -   
 
-### 7. Team Members：
+### Team Members：
 
 -   Hidetaka Ko | Product Manager | We have been developing and operating Japan’s largest homestay matching service for 4 years as CEO/Co-Founder.
 -   0xYee | Full Stack Software Engineer | Working with a DAO the past 2 months.
 -   Jonathan Cruz | UI/UX Designer | Specialize in designing and developing user interfaces and 3D digital assets.
 
 
-### 8. Resourses
+### Resourses
 
 -   [Polygonscan]()
 -   [Medium]()
