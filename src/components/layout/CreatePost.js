@@ -1,11 +1,13 @@
 import { Flex, Input, Textarea, Text, RadioGroup, Radio, Spacer, Button } from "@chakra-ui/react";
 import { useState } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { useOrbis } from "../../utils/context/orbis";
 import { FileUploader } from "react-drag-drop-files";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
+import { raindropGroup } from "../../utils/constants";
+import { useLock } from "../../utils/hooks/subgraphLock";
 
-const CreatePost = (props) => {
+const CreatePost = () => {
 
     const [active, setActive] = useState(false);
     const [title, setTitle] = useState('');
@@ -13,9 +15,11 @@ const CreatePost = (props) => {
     const [postVisibility, setPostVisibility] = useState('public');
     const [picture, setPicture] = useState();
 
+    const { address } = useAccount();
     const { orbis } = useOrbis();
     const { chain } = useNetwork();
     const client = useWeb3Storage();
+    const lock = useLock(address);
 
     const handlePublish = async () => {
         if (text == '' || title == '') {
@@ -28,6 +32,7 @@ const CreatePost = (props) => {
         const postData = {
             title: title,
             body: text,
+            context: raindropGroup
         }
 
         //Upload image to IPFS
@@ -51,7 +56,7 @@ const CreatePost = (props) => {
                 type: 'token-gated',
                 chain: chain.name.toLowerCase(),
                 contractType: 'ERC721',
-                contractAddress: props.lock.address,
+                contractAddress: lock.address,
                 minTokenBalance: "1" //Only 1 NFT as key
             })
         } else { //Public post
@@ -72,7 +77,7 @@ const CreatePost = (props) => {
             py='10px'
             flexDirection='column'
             alignItems='center'
-            border='1px solid'
+            borderBottom='1px solid'
             borderColor='brand.500'
             transform='100ms'
         >
@@ -109,7 +114,7 @@ const CreatePost = (props) => {
                     <Spacer />
                     <RadioGroup onChange={setPostVisibility} value={postVisibility} maxW='50%'>
                         <Radio value='public'>Public</Radio>
-                        <Radio ml='10px' value='fans'>Fans only</Radio>
+                        <Radio ml='10px' value='fans' isDisabled={lock == undefined}>Fans only</Radio>
                         {/*TODO disable Fans only if not creator with tooltip to CTA to become one */}
                     </RadioGroup>
                 </Flex>

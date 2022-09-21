@@ -1,8 +1,10 @@
 import Header from "../components/layout/Header";
-import { ChakraProvider, Flex, Text, Image, Button, Input, Box, Spacer, Checkbox } from '@chakra-ui/react'
-import { useState } from "react";
+import { Flex, Text, Image, Button, Input, Box, Spacer, Checkbox } from '@chakra-ui/react'
+import { useEffect, useState } from "react";
 import Footer from "../components/layout/Footer";
 import { theme } from '../utils/theme';
+import { useAccount } from "wagmi";
+import { useNavigate } from "react-router-dom";
 
 //background: linear-gradient(90deg, #0085AB 0%, #2CB2C3 34.2%, #F9D520 69.77%, #D1D922 102.6%);
 
@@ -94,16 +96,25 @@ const phase2 = ['Subscription NFT', 'Giveaways', 'Tiered Time-limited', 'Revokab
 const phase3 = ['Notification for contents', 'Comment for Posts', 'Private Direct Messaging', 'Mobile App']
 const phase4 = ['Polygon', 'Optimism', 'Oasis', 'SKALE Network', 'Aurora', 'Cronos', 'etc...']
 
-export default function Home() {
+export default function LandingPage() {
 
   const [creators, setCreators] = useState(407); //407 for testing
   const [amount, setAmount] = useState('6,183,232'); //for testing
   const [selected, setSelected] = useState(0);
 
+  const { isConnected } = useAccount()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if(isConnected) {
+      navigate('/app')
+    }
+  }, [isConnected])
+
   return (
-    <ChakraProvider theme={theme}>
+    <Flex flexDirection='column' alignItems='center' w='100%'>
       <Header />
-      <Flex alignItems='center' height='80vh'>
+      <Flex alignItems='center' height='80vh' w='100%'>
         <Flex justifyContent='space-evenly' w='100%'>
           <div style={{ height: '100%' }}>
             <Text fontFamily='inter' fontSize='5xl' maxW='40vw' fontWeight='bold'>
@@ -114,13 +125,13 @@ export default function Home() {
         </Flex>
       </Flex>
 
-      <Flex alignItems='center' justifyContent='center' flexDirection='column'>
+      <Flex alignItems='center' justifyContent='center' flexDirection='column'  w='100%'>
         <Image src='TopCreators.svg' />
         <Button borderRadius='20px' colorScheme='brand' w='12%'>See more</Button>
       </Flex>
       <Image w='100vw' src='Ellipse.svg' position='absolute' top='1150px' zIndex='-1' />
 
-      <Flex mt='80px' alignItems='center' flexDirection='column'>
+      <Flex mt='80px' alignItems='center' flexDirection='column'  w='100%'>
         <Text fontFamily='inter' color='white'>Check out these</Text>
         <Text fontSize='4xl' mb='20px' color='brand.500' pb='5px' fontWeight='bold' borderBottom='3px solid rgba(0, 133, 171, 1)'>Popular Profiles</Text>
         <Flex alignItems='center' justifyContent='space-between' w='100%' p='0 20px'>
@@ -154,11 +165,11 @@ export default function Home() {
           <Image src='Squiggle.svg' maxW='250px' />
         </Flex>
         {/*Need shapes to be centered
-        <Image src='Shapes.svg' position='absolute' left='-220px' maxW='120vw' />
-  */}
+          <Image src='Shapes.svg' position='absolute' left='-220px' maxW='120vw' />
+        */}
       </Flex>
 
-      <Flex flexDirection='column' alignItems='center' mt='100px' backgroundColor='transparent'>
+      <Flex flexDirection='column' alignItems='center' mt='100px' backgroundColor='transparent'  w='100%'>
         <div style={{ borderBottom: 'solid 2px rgba(191, 236, 231, 1)', width: '50%' }} />
 
         {/*<Text mt='40px' fontSize='3xl' fontWeight='bold'>Proud Sponsors</Text>*/}
@@ -185,6 +196,7 @@ export default function Home() {
         backgroundSize='120% 100%'
         //backgroundAttachment='fixed'
         backgroundRepeat='no-repeat'
+        w='100%'
       >
 
         <Flex
@@ -279,6 +291,7 @@ export default function Home() {
         backgroundSize='120% 100%'
         //backgroundAttachment='fixed'
         backgroundRepeat='no-repeat'
+        w='100%'
       >
 
         <Flex alignItems='center' flexDirection='column'>
@@ -359,6 +372,7 @@ export default function Home() {
         alignItems='center'
         justifyContent='space-around'
         h='190vh'
+        w='100%'
       >
 
         <Flex
@@ -413,6 +427,6 @@ export default function Home() {
       </Flex>
 
       <Footer />
-    </ChakraProvider >
+    </Flex >
   )
 }

@@ -12,8 +12,9 @@ const Preconnect = () => {
     }, [])
 
     return (
-        <Flex alignItems='center' justifyContent='center' h='100vh' w='100vw'>
-            <Text fontSize='5xl' align='center'>Please connect your wallet</Text>
+        <Flex alignItems='center' flexDirection='column' justifyContent='center' h='100vh' w='100vw'>
+            <Text fontSize='5xl' align='center'>Logging in...</Text>
+            <Text fontSize='xl' color='gray' align='center'>If prompted, please sign log in messages</Text>
         </Flex>
     )
 }
