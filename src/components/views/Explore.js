@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { raindropGroup } from "../../utils/constants";
 import { useOrbis } from "../../utils/context/orbis";
 import Blockies from 'react-blockies';
+import { utils } from "ethers";
 
 const Explore = () => {
 
@@ -37,7 +38,6 @@ const Explore = () => {
                 mb='20px'
                 pt='30px'
                 px='20px'
-                h='100%'
                 justifyContent='space-around'
                 alignItems='center'
                 boxShadow='0px 2px 9px rgba(0, 0, 0, 0.25)'
@@ -59,10 +59,10 @@ const ProfilePreview = ({ profile, address }) => {
 
     return (
         <Flex
-            mb='15px'
+            mb='30px'
             p='20px'
             w='42%'
-            h='280px'
+            h='250px'
             justifyContent='center'
             flexDirection='column'
             alignItems='center'
@@ -73,7 +73,7 @@ const ProfilePreview = ({ profile, address }) => {
             {profile.pfp ?
                 <Image src={'https://' + profile.pfp + '.ipfs.w3s.link'} maxW='100px' maxH='100px'/>
                 :
-                <Blockies seed={address} scale={10} />
+                <Blockies seed={utils.getAddress(address)} scale={10} />
             }
             <Text my='10px' align='center' fontSize='sm' fontWeight='semibold'>{profile.description}</Text>
             <Text align='center' fontSize='large' fontWeight='semibold' borderBottom='3px solid' borderColor='brand.500'>{profile.username}</Text>

@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { useAccount, useNetwork } from "wagmi";
-import { raindropGroup, subgraphURLs } from "../../utils/constants";
+import { CHAIN_NAMES, raindropGroup, subgraphURLs } from "../../utils/constants";
 import { useOrbis } from "../../utils/context/orbis";
 import { useLock } from "../../utils/hooks/subgraphLock";
 import CreatePost from "../layout/CreatePost";
@@ -13,20 +13,24 @@ import Blockies from 'react-blockies';
 import EditPopup, { EditMembership } from "../layout/EditProfile";
 import Membership from "../layout/Membership";
 import PostPreview from "../layout/PostPreview";
+import formatAddress from "../../utils/formatAddress";
+import Minting from "../layout/Minting";
 
 const Profile = () => {
 
+    const { address: myAddress } = useAccount();
+    const { profileAddress: usingAddress } = useParams();
+
     const [searchParams, setSearchParams] = useSearchParams()
 
-    const [myProfile, setMyProfile] = useState(false);
+    const [myProfile, setMyProfile] = useState(usingAddress.toLowerCase() == myAddress.toLowerCase());
     const [tab, setTab] = useState(0);
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState();
     const [isMember, setIsMember] = useState(null);
-    const { profileAddress: usingAddress } = useParams();
+    const [minting, setMinting] = useState(false);
     const lock = useLock(ethers.utils.getAddress(usingAddress));
 
-    const { address: myAddress } = useAccount();
     const location = useLocation();
 
     //TODO add ENS compatibility
@@ -62,7 +66,7 @@ const Profile = () => {
     }
 
     const getPosts = async () => {
-        console.log('Getting User posts:', user);
+        console.log('Getting User posts:', user, isMember);
         if (!user) { return }
         const { data, error } = await orbis.getPosts({
             did: user.did,
@@ -73,11 +77,16 @@ const Profile = () => {
     }
 
     const checkMembership = async () => {
+        if (myProfile) {
+            setIsMember(true);
+            return;
+        }
         if (!lock) {
+            setIsMember(false);
             return
         }
         console.log('Getting Membership from subgraph...')//, lock, myAddress);
-        const subgraphData = await fetch(subgraphURLs[chain.id], {
+        const subgraphData = await fetch(subgraphURLs[lock.chain], {
             method: 'POST',
             contentType: 'application/json',
             body: JSON.stringify(
@@ -100,18 +109,28 @@ const Profile = () => {
     }
 
     const handleSubscribe = async () => {
-        const payWallConfig = {
+        //Change to Creator's lock chain
+        if(chain.id != lock.chain) {
+            await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x' + lock.chain.toString(16) }]
+            })
+        }
+
+        const paywallConfig = {
             locks: {
                 [lock.address]: {
-                    network: lock.chain
+                    network: Number(lock.chain),
+                    persistentCheckout: false
                     // recurringPayments: 1
                 }
             },
-            title: lock.name
+            title: lock.name,
+            pessimistic: true
         }
 
         //TODO change localhost
-        const uri = 'https://app.unlock-protocol.com/checkout?redirectUri=' + 'localhost:3000' + location.pathname + '&paywallConfig=' + encodeURIComponent(JSON.stringify(payWallConfig));
+        const uri = 'https://app.unlock-protocol.com/checkout?redirectUri=' + 'localhost:3000' + location.pathname + '&paywallConfig=' + encodeURIComponent(JSON.stringify(paywallConfig));
         window.location.href = uri;
     }
 
@@ -123,17 +142,19 @@ const Profile = () => {
 
     useEffect(() => {
         checkMembership()
-    }, [lock])
+        console.log('Lock', lock);
+    }, [lock, myProfile])
 
     useEffect(() => {
+        setPosts([]);
         if (usingAddress.toLowerCase() != myAddress.toLowerCase()) {
             getUserData();
             setMyProfile(false);
-        } else {
+        } else { //MyProfile
             setMyProfile(true);
             setUser(myUser);
         }
-    }, [usingAddress])
+    }, [usingAddress, myUser])
 
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
@@ -186,9 +207,9 @@ const Profile = () => {
                         {user && user.details.profile && user.details.profile.pfp ?
                             <Image boxSize='100px' src={'https://' + user.details.profile.pfp + '.ipfs.w3s.link'} />
                             :
-                            <Blockies seed={usingAddress} scale={10} />
+                            <Blockies seed={ethers.utils.getAddress(usingAddress)} scale={10} />
                         }
-                        <Text mt='5px' fontWeight='bold' fontSize='large'>{user && (user.username || usingAddress)}</Text>
+                        <Text mt='5px' fontWeight='bold' fontSize='large'>{user && (user.username || formatAddress(usingAddress))}</Text>
                         {lock && <Text>Creator</Text>}
                         <Text w='100%' align='center' pb='20px'>{user && user.details.profile && user.details.profile.description || "No description found"}</Text>
                     </Flex>
@@ -202,6 +223,7 @@ const Profile = () => {
                         lock && !isMember &&
                         <Flex mt='15px' flexDirection='column' alignItems='center' position='absolute' right='30px'>
                             <Button colorScheme='brand' borderRadius='70px' onClick={handleSubscribe}>Subscribe</Button>
+                            <Text mt='2px' fontSize='x-small' color='#ADADAD'>On {CHAIN_NAMES[lock.chain]}</Text>
                         </Flex>
                     }
 
@@ -220,9 +242,9 @@ const Profile = () => {
 
                 {tab == 0 &&
                     <div style={{ width: '100%' }}>
-                        {myProfile && <CreatePost lock={lock} />}
+                        {myProfile && <CreatePost lock={lock} getPosts={getPosts} />}
 
-                        {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} isMember={isMember} handleSubscribe={handleSubscribe} price={ethers.utils.formatEther(lock.price)} />)}
+                        {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} isMember={isMember} handleSubscribe={handleSubscribe} price={lock ? ethers.utils.formatEther(lock.price) : null} />)}
                     </div>
                 }
 
@@ -232,25 +254,23 @@ const Profile = () => {
                         (
                             lock
                                 ?
-                                <Membership self price={ethers.utils.formatEther(lock.price)} username={user && user.username} />
+                                <Membership self price={ethers.utils.formatEther(lock.price)} username={user && user.username} lock={lock || null} />
                                 :
                                 <Flex pb='40px'>
-                                    <EditMembership lock={lock} cancelButton={false} border={false} />
+                                    <EditMembership lock={lock} cancelButton={false} border={false} setMinting={setMinting}/>
                                 </Flex>
 
                         )
                         :
-                        <div>
-                            Fan view
-                        </div>
+                        <Membership price={lock && ethers.utils.formatEther(lock.price)} username={user && user.username} lock={lock || null} />
                     )
                 }
 
             </Flex>
 
+            {minting && <Minting />}
 
-
-            {searchParams.get('editing') && <EditPopup setEditing={setEditing} lock={lock} />}
+            {searchParams.get('editing') && <EditPopup setEditing={setEditing} lock={lock} setMinting={setMinting}/>}
         </Flex >
     )
 }

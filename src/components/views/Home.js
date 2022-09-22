@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { raindropGroup } from "../../utils/constants";
 import { useOrbis } from "../../utils/context/orbis";
@@ -37,7 +37,10 @@ const Home = () => {
                 borderColor='brand.500'
                 position='relative'
             >
-                <CreatePost />
+                <Flex borderBottom='1px solid' borderColor='brand.500' w='100%'>
+                    <Text fontWeight='bold' pl='30px' py='10px' color='brand.500' fontSize='2xl'>HOME</Text>
+                </Flex>
+                <CreatePost withPicture getPosts={getPosts}/>
                 {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post}/>)}
             </Flex>
 

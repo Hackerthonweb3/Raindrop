@@ -2,7 +2,9 @@ import { Flex, Text, Image, Button } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useOrbis } from "../../utils/context/orbis";
 import { useNavigate } from "react-router-dom";
-//import LitJsSdk from 'lit-js-sdk'
+import formatAddress from "../../utils/formatAddress";
+import Blockies from 'react-blockies';
+import { utils } from "ethers";
 
 const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 
@@ -31,7 +33,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                 setUnencrypted(res.result);
             }
         } catch (e) {
-            console.error('Decryption error', e);
+            //console.error('Decryption error', e);
         }
         setDecrypting(false);
     }
@@ -42,7 +44,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
             decryptBody();
         }
         setDate(new Date(post.timestamp * 1000));
-    }, [])
+    }, [isMember])
 
     return (
         <Flex
@@ -58,8 +60,12 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
         >
             <Flex alignItems='center' justifyContent='space-between' w='100%' px='20px' py='15px'>
                 <Flex alignItems='center' cursor='pointer' onClick={handleProfileClick}>
-                    <Image mr='10px' maxH='50px' src={post.creator_details?.profile?.pfp && 'https://' + post.creator_details.profile.pfp + '.ipfs.w3s.link'} />
-                    <Text fontWeight='bold'>{post.creator_details?.profile?.username || "No username??"}</Text>
+                    {post.creator_details?.profile?.pfp ?
+                        <Image maxH='50px' src={'https://' + post.creator_details.profile.pfp + '.ipfs.w3s.link'} />
+                        :
+                        <Blockies seed={utils.getAddress(post.creator_details?.metadata?.address)} scale={4} />
+                    }
+                    <Text ml='10px' fontWeight='bold'>{post.creator_details?.profile?.username || formatAddress(post.creator_details?.metadata?.address)}</Text>
                 </Flex>
                 <Text fontSize='sm' color='#AEAEAE'>{date?.toLocaleDateString()}</Text>
             </Flex>
@@ -70,17 +76,21 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                     w='100%'
                     flexDirection='column'
                     position='relative'
+                    minH='200px'
+                    maxH='400px'
                 >
                     <Image
                         src={'https://' + post.content.data.cover + '.ipfs.w3s.link'}
                         filter={post.content.encryptedBody && !unencrypted && 'blur(5px) brightness(60%)'}
                         w='100%'
                         maxH='400px'
+                        alt='Images may take a minute to load, reload if necessary'
+                        fit='cover'
                     />
                     {post.content.encryptedBody && !unencrypted &&
                         <Flex w='50%' position='absolute' flexDirection='column' top='10%'>
                             <Image src='/lock.svg' h='60px' />
-                            <Text mt='10px' color='white' align='center' fontWeight='bold' fontSize='large'>Unlock this post by becoming a member</Text>
+                            <Text textShadow='1px 1px #000' mt='10px' color='white' align='center' fontWeight='bold' fontSize='large'>Unlock this post by becoming a member</Text>
                             {price && handleSubscribe && <Button onClick={handleSubscribe} mt='15px' size='sm' colorScheme='brand'>{`Join now for  $${price} per month`}</Button>}
                         </Flex>
                     }

@@ -1,7 +1,7 @@
-import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Box, Checkbox } from "@chakra-ui/react";
+import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Image, Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
-import { unlockAddress, time, currencies, raindropGroup } from '../../utils/constants';
+import { unlockAddress, time, currencies, raindropGroup, CHAIN_NAMES } from '../../utils/constants';
 import { useOrbis } from "../../utils/context/orbis";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
 import { FileUploader } from "react-drag-drop-files";
@@ -52,14 +52,14 @@ const EditPopup = (props) => {
                 }
 
                 {tab == 1 &&
-                    <EditMembership lock={props.lock} setEditing={props.setEditing} />
+                    <EditMembership lock={props.lock} setEditing={props.setEditing} setMinting={props.setMinting} />
                 }
             </Flex>
         </Flex >
     )
 }
 
-export const EditMembership = ({ lock, cancelButton = true, border = true, setEditing }) => {
+export const EditMembership = ({ lock, cancelButton = true, border = true, setEditing, setMinting }) => {
 
     const [price, setPrice] = useState('');
     const [loading, setLoading] = useState(false);
@@ -87,21 +87,33 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
             console.log('Connected')
 
-            const createdLockAddress = await walletService.createLock({
-                publicLockVersion: 11,
-                name: user.username + " Raindrop", //Adding raindrop to be able to use it in subgraph (user could have other locks for other stuff)
-                maxNumberOfKeys: ethers.constants.MaxUint256.toString(),
-                expirationDuration: time,
-                keyPrice: price.toString(), //walletService already transforms to wei
-                currencyContractAddress: currencies[chain.id]
-            }, (err, hash) => {
-                console.log(err, hash)
-                /*toast({
-                    title: 'Transaction sent',
-                    position: 'bottom-right',
+            let createdLockAddress;
 
-                })*/
-            })
+            try {
+                createdLockAddress = await walletService.createLock({
+                    publicLockVersion: 11,
+                    name: user.username + " Raindrop", //Adding raindrop to be able to use it in subgraph (user could have other locks for other stuff)
+                    maxNumberOfKeys: ethers.constants.MaxUint256.toString(),
+                    expirationDuration: time,
+                    keyPrice: price.toString(), //walletService already transforms to wei
+                    currencyContractAddress: currencies[chain.id]
+                }, (err, hash) => {
+                    setMinting(true);
+                    console.log(err, hash)
+                    if (err) {
+                        //TODO handle error
+                        setMinting(false);
+                        setLoading(false);
+                    }
+                })
+            } catch (err) {
+                //TODO handle error
+                setMinting(false);
+                setLoading(false);
+                return;
+            }
+
+            console.log('Minted', createdLockAddress);
 
             //Set their membership true in Orbis
             const orbisRes = await orbis.setGroupMember(raindropGroup, true);
@@ -117,7 +129,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
             console.log(key);
 
-            //TODO reload data
+            setMinting(false);
         } else { //Update membership
             console.log('Updating', lock.address);
             const walletService = new WalletService(unlockAddress);
@@ -136,6 +148,8 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
         }
 
         setLoading(false);
+        setEditing && setEditing(false); //Close popup
+        window.location.reload()
     }
 
     return (
@@ -159,6 +173,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     </Flex>
                 </FormControl>
             </Flex>
+            {!lock && <Text mt='10px' mb='5px' color='gray' fontSize='sm' align='center' w='100%'>You'll create your membership in {CHAIN_NAMES[chain.id]}</Text>}
             <Flex>
                 {cancelButton &&
                     <Button borderRadius='10px' px='50px' colorScheme='brandLight' color='brand.500' onClick={() => setEditing(false)}>Cancel</Button>
@@ -183,6 +198,7 @@ const EditProfile = (props) => {
     const [description, setDescription] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const [cover, setCover] = useState(null);
+    const [saving, setSaving] = useState(false);
 
     const client = useWeb3Storage();
     const { user, orbis, getOrbis } = useOrbis();
@@ -198,6 +214,7 @@ const EditProfile = (props) => {
     }
 
     const handleSave = async () => {
+        setSaving(true);
 
         let newData = {}
 
@@ -244,6 +261,7 @@ const EditProfile = (props) => {
             console.error(res);
         }
 
+        setSaving(false);
         getOrbis(); //TODO fix to manually change username in orbis context
         props.setEditing(false); //Close popup
     }
@@ -262,7 +280,7 @@ const EditProfile = (props) => {
             >
                 <Text fontSize='xl' fontWeight='bold'>Customize Profile</Text>
 
-                <FormControl mt='20px'>
+                <FormControl mt='10px'>
                     <FormLabel fontWeight='semibold'>Name</FormLabel>
                     <Input
                         variant='filled'
@@ -274,7 +292,7 @@ const EditProfile = (props) => {
                     <FileUploader handleChange={handleProfilePicture} types={["JPG", "PNG"]}>
                         <Flex
                             cursor='pointer'
-                            py='20px'
+                            py='10px'
                             border='1px solid'
                             borderColor='brand.500'
                             borderRadius='10px'
@@ -284,6 +302,7 @@ const EditProfile = (props) => {
                             alignItems='center'
                             backgroundColor={profilePicture ? 'gray' : 'white'}
                         >
+                            <Image src='/camera.svg' mb='8px'/>
                             <Text fontWeight='semibold' noOfLines={2} w='60%' color='brand.500' align='center'>Add new profile photo</Text>
                         </Flex>
                     </FileUploader>
@@ -295,12 +314,20 @@ const EditProfile = (props) => {
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         resize='vertical'
-                        h='100px'
+                        h='60px'
                     />
                     <FormLabel mt='20px' fontWeight='semibold'>Cover image</FormLabel>
 
                     <FileUploader handleChange={handleCover} types={["JPG", "PNG"]}>
-                        <Flex border='1px solid #E6E6E6' borderRadius='10px' p='8px' w='60%'>
+                        <Flex
+                            cursor='pointer'
+                            border='1px solid #E6E6E6'
+                            borderRadius='10px'
+                            p='8px'
+                            w='100%'//'60%'
+                            backgroundColor={cover ? 'gray' : 'white'}
+                        >
+                            <Image src='/img.svg' mr='10px'/>
                             Add cover image
                         </Flex>
                     </FileUploader>
@@ -310,7 +337,15 @@ const EditProfile = (props) => {
             </Flex>
             <Flex w='100%' alignItems='center' justifyContent='flex-end'>
                 <Button borderRadius='10px' px='50px' colorScheme='brandLight' color='brand.500' onClick={() => props.setEditing(false)}>Cancel</Button>
-                <Button borderRadius='10px' ml='10px' px='50px' colorScheme='brand' onClick={handleSave}>Save</Button>
+                <Button
+                    borderRadius='10px'
+                    ml='10px'
+                    px='50px'
+                    colorScheme='brand'
+                    onClick={handleSave}
+                    isLoading={saving}
+                    loadingText='Saving'
+                >Save</Button>
             </Flex>
         </Flex>
     )

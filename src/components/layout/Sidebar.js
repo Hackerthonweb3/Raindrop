@@ -3,7 +3,8 @@ import { useAccount, useDisconnect } from "wagmi"
 import { useOrbis } from '../../utils/context/orbis';
 import { useLocation, useNavigate } from "react-router-dom";
 import Blockies from 'react-blockies';
-
+import formatAddress from "../../utils/formatAddress";
+import { utils } from "ethers";
 
 const Tab = (props) => {
     return (
@@ -14,7 +15,7 @@ const Tab = (props) => {
     )
 }
 
-const Sidebar = () => {
+const Sidebar = ({ setCreatingPost }) => {
 
     const { user, orbis } = useOrbis();
     const { address } = useAccount();
@@ -24,7 +25,7 @@ const Sidebar = () => {
     const location = useLocation();
 
     const handleMyProfile = () => {
-        navigate('/app/profile/' + address)
+        navigate('/app/profile/' + address || '')
     }
     const handleHome = () => {
         navigate('/app')
@@ -42,7 +43,12 @@ const Sidebar = () => {
         if (res.status == 200) {
             console.log('Logged out')
             navigate('/')
+            window.location.reload();
         }
+    }
+
+    const handleCreate = () => {
+        setCreatingPost(true);
     }
 
     return (
@@ -50,59 +56,65 @@ const Sidebar = () => {
             <Image src='/Logo.svg' maxW='30%' m='20px' cursor='pointer' alignSelf='flex-start' />
             <Flex flexDirection='column' w='100%'>
                 <Flex alignItems='center' onClick={handleHome} color={location.pathname == '/app' ? 'brand.500' : '#8F9BBA'} mt='30px' mx='25px' cursor='pointer' w='80%' pr='auto' borderRight='3px solid' borderColor={location.pathname == '/app' ? 'brand.500' : 'white'}>
-                    <HomeIcon color='inherit' boxSize={5} />
+                    <HomeIcon color='inherit' boxSize={6} />
                     <Text ml='10px' color='inherit' fontWeight='500' fontSize='xl'>Home</Text>
                 </Flex>
 
-                <Flex alignItems='center' onClick={handleMyProfile} color={location.pathname == ('/app/profile/' + address) ? 'brand.500' : '#8F9BBA'} mt='20px' mx='25px' cursor='pointer' w='80%' pr='auto' borderRight='3px solid' borderColor={location.pathname == ('/app/profile/' + address) ? 'brand.500' : 'white'}>
-                    <MyProfileIcon color='inherit' boxSize={5} />
-                    <Text ml='10px' color='inherit' fontWeight='500' fontSize='xl'>My Profile</Text>
-                </Flex>
+                {address && user &&
+                    <Flex alignItems='center' onClick={handleMyProfile} color={location.pathname == ('/app/profile/' + address) ? 'brand.500' : '#8F9BBA'} mt='20px' mx='25px' cursor='pointer' w='80%' pr='auto' borderRight='3px solid' borderColor={location.pathname == ('/app/profile/' + address) ? 'brand.500' : 'white'}>
+                        <MyProfileIcon color='inherit' boxSize={6} />
+                        <Text ml='10px' color='inherit' fontWeight='500' fontSize='xl'>My Profile</Text>
+                    </Flex>
+                }
 
                 <Flex alignItems='center' onClick={handleExplore} mt='20px' color={location.pathname == '/app/explore' ? 'brand.500' : '#8F9BBA'} mx='25px' cursor='pointer' w='80%' pr='auto' borderRight='3px solid' borderColor={location.pathname == '/app/explore' ? 'brand.500' : 'white'}>
-                    <ExploreIcon color='inherit' boxSize={5} />
+                    <ExploreIcon color='inherit' boxSize={6} />
                     <Text ml='10px' color='inherit' fontWeight='500' fontSize='xl'>Explore</Text>
                 </Flex>
 
                 {/**
                 <Flex mt='20px' mx='25px' cursor='pointer' w='80%' pr='auto' borderRight='3px solid' borderColor='brand.400'>
-                    <Image src="/myProfile.svg" fill='brand.400' />
-                    <Text ml='10px' color='#8F9BBA' fontWeight='500' fontSize='xl'>Messages</Text>
+                <Image src="/myProfile.svg" fill='brand.400' />
+                <Text ml='10px' color='#8F9BBA' fontWeight='500' fontSize='xl'>Messages</Text>
                 </Flex>
-                */}
+            */}
 
                 <Flex alignItems='center' onClick={handleFanTools} mt='20px' mx='25px' color='#8F9BBA' cursor='pointer' w='80%' pr='auto' borderRight='3px solid' borderColor='white'>
-                    <FanToolsIcon color='inherit' boxSize={5} />
+                    <FanToolsIcon color='inherit' boxSize={6} />
                     <Text ml='10px' color='inherit' fontWeight='500' fontSize='xl'>Fan tools</Text>
                 </Flex>
 
                 {/*
                 <Flex mt='20px' mx='25px' cursor='pointer' w='80%' pr='auto' borderRight='3px solid' borderColor='brand.400'>
-                    <Image src="/myProfile.svg" fill='brand.400' />
-                    <Text ml='10px' color='#8F9BBA' fontWeight='500' fontSize='xl'>Settings</Text>
+                <Image src="/myProfile.svg" fill='brand.400' />
+                <Text ml='10px' color='#8F9BBA' fontWeight='500' fontSize='xl'>Settings</Text>
                 </Flex>
-                */}
+            */}
             </Flex>
 
-            <Button borderRadius='70px' mt='50px' w='70%' colorScheme='brand' color='white'>Create</Button>
+            <Button onClick={handleCreate} borderRadius='70px' mt='50px' w='70%' colorScheme='brand' color='white'>Create</Button>
 
             <Spacer />
 
-            <Flex w='100%' p='10px' alignItems='center' borderBottom='1px solid' borderTop='1px solid' borderColor='brand.500'>
-                <Flex cursor='pointer' alignItems='center' onClick={handleLogOut} >
-                    <Image src='/logout.svg' />
-                    <Text ml='10px' fontWeight='semibold' color='brand.500'>Log Out</Text>
+            {address && user &&
+                <Flex w='100%' p='10px' alignItems='center' borderBottom='1px solid' borderTop='1px solid' borderColor='brand.500'>
+                    <Flex ml='10px' cursor='pointer' alignItems='center' onClick={handleLogOut} >
+                        <Image src='/logout.svg' />
+                        <Text ml='10px' fontWeight='semibold' color='brand.500'>Log Out</Text>
+                    </Flex>
                 </Flex>
-            </Flex>
+            }
 
-            <Flex w='100%' p='10px' alignItems='center' cursor='pointer' onClick={() => navigate('/app/profile/' + address)}>
-                {user && user.details.profile && user.details.profile.pfp ?
-                    <Image src={'https://' + user.details.profile.pfp + '.ipfs.w3s.link'} maxH='50px' max='70px' />
-                    :
-                    <Blockies seed={address} scale={4} />
-                }
-                {user && <Text ml='10px' fontWeight='semibold'>{(user.username || address)}</Text>}
-            </Flex>
+            {address && user &&
+                <Flex w='100%' p='10px' alignItems='center' cursor='pointer' onClick={() => navigate('/app/profile/' + address)}>
+                    {user && user.details.profile && user.details.profile.pfp ?
+                        <Image src={'https://' + user.details.profile.pfp + '.ipfs.w3s.link'} maxH='50px' max='70px' />
+                        :
+                        <Blockies seed={utils.getAddress(address)} scale={4} />
+                    }
+                    <Text ml='10px' fontWeight='semibold'>{((user && user.username) || formatAddress(address))}</Text>
+                </Flex>
+            }
         </Flex>
     )
 }

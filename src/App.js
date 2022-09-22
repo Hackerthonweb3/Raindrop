@@ -5,23 +5,26 @@ import { Flex, ChakraProvider } from '@chakra-ui/react'
 import { publicProvider } from 'wagmi/providers/public';
 import { theme } from './utils/theme'
 import { OrbisProvider, useOrbis } from './utils/context/orbis';
-import { useEffect, useState } from 'react';
+import { useEffect, lazy, useState } from 'react';
 import { BrowserRouter, Route, Routes, useRoutes } from "react-router-dom";
 import LandingPage from './pages/landingPage';
 import Profile from './components/views/Profile'
-import Sidebar from './components/layout/Sidebar'
 import Preconnect from './components/views/Preconnect'
 import Welcome from './components/layout/Welcome';
 import Home from './components/views/Home';
 import Explore from './components/views/Explore';
+import Sidebar from './components/layout/Sidebar'
+import CreatePost from './components/layout/CreatePost';
+//const Sidebar = lazy(() => import('./components/layout/Sidebar'));
 
 const { chains, provider } = configureChains(
   [
     chain.polygon,
     chain.optimism,
     //...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true'
-    chain.goerli//, chain.kovan, chain.rinkeby, chain.ropsten]
+    chain.goerli,//, chain.kovan, chain.rinkeby, chain.ropsten]
     //  : []),
+    chain.polygonMumbai
   ],
   [
     publicProvider(),
@@ -42,11 +45,13 @@ const wagmiClient = createClient({
 
 export default function App() {
 
+  /*
   useEffect(() => {
     window.ethereum.on('chainChanged', () => {
       document.location.reload();
     })
   }, [])
+  */
 
   return (
     <WagmiConfig client={wagmiClient}>
@@ -71,10 +76,18 @@ export default function App() {
 const RoutingWrapper = () => {
 
   const { isConnected } = useAccount()
-  const { user, welcome, setWelcome } = useOrbis()
+  const { user, welcome, setWelcome, orbis } = useOrbis()
+  const [creatingPost, setCreatingPost] = useState(false);
 
-  console.log('User', user);
-  console.log('isConnceted', isConnected);
+  useEffect(() => {
+    window.ethereum.on('accountsChanged', async () => {
+      const res = await orbis.logout();
+      if (res.status == 200) {
+        console.log('Logged out')
+        window.location.reload();
+      }
+    })
+  }, [])
 
   return (
     <div>
@@ -86,8 +99,9 @@ const RoutingWrapper = () => {
       {(isConnected && user)
         ? (
           <Flex w='100%' height='100vh'>
-            <Sidebar />
+            <Sidebar setCreatingPost={setCreatingPost} />
             {welcome && <Welcome setWelcome={setWelcome} />}
+            {creatingPost && <CreatePostPopup setCreatingPost={setCreatingPost} />}
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='profile/:profileAddress' element={<Profile />} />
@@ -98,9 +112,32 @@ const RoutingWrapper = () => {
         )
         : <Preconnect />
       }
-
-
     </div>
   )
+}
 
+const CreatePostPopup = ({ setCreatingPost }) => {
+
+  return (
+    <Flex
+      alignItems='center'
+      justifyContent='center'
+      position='fixed'
+      bottom='0px'
+      left='0px'
+      h='100vh'
+      w='100vw'
+      backdropFilter='blur(5px)'
+      backgroundColor='rgba(10,10,10,0.3)'
+      zIndex={5}
+    >
+      <Flex
+        backgroundColor='white'
+        minW='450px'
+        w='60%'
+      >
+        <CreatePost popUp setCreatingPost={setCreatingPost}/>
+      </Flex>
+    </Flex>
+  )
 }

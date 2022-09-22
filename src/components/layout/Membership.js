@@ -1,7 +1,7 @@
 import { Flex, Text, Image, Button } from "@chakra-ui/react";
+import { CHAIN_NAMES } from "../../utils/constants";
 
-
-const Membership = ({ self = false, price, username }) => {
+const Membership = ({ self = false, price, username, lock }) => {
 
     return (
         <Flex flexDirection='column' w='100%' alignItems='center'>
@@ -9,6 +9,7 @@ const Membership = ({ self = false, price, username }) => {
             <Image />
             <Text fontSize='small' fontWeight='semibold'>${price}</Text>
             <Text fontSize='xs' color='#505050B2'>PER MONTH</Text>
+            {lock && <Text>{CHAIN_NAMES[lock.chain]}</Text>}
             {/*A description TODO */}
 
             <Text fontSize='2xl' fontWeight='bold'>About {username}</Text>
