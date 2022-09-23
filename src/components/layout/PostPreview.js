@@ -43,6 +43,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
         setDecrypting(false);
     }
 
+    console.log('POST', post)
 
     useEffect(() => {
         if (post.content.encryptedBody) { // Gated content
@@ -75,7 +76,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                 <Text fontSize='sm' color='#AEAEAE'>{date?.toLocaleDateString()}</Text>
             </Flex>
 
-            {post.content.data && post.content.data.cover &&
+            {post.content.data && (post.content.data.cover || post.content.data.video) &&
                 <Flex
                     alignItems='center'
                     w='100%'
@@ -84,14 +85,31 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                     minH='200px'
                     maxH='400px'
                 >
-                    <Image
-                        src={'https://' + post.content.data.cover + '.ipfs.w3s.link'}
-                        filter={post.content.encryptedBody && !unencrypted && 'blur(5px) brightness(60%)'}
-                        w='100%'
-                        maxH='400px'
-                        alt='Images may take a minute to load, reload if necessary'
-                        fit='cover'
-                    />
+                    {post.content.data.cover &&
+                        <Image
+                            src={'https://' + post.content.data.cover + '.ipfs.w3s.link'}
+                            filter={post.content.encryptedBody && !unencrypted && 'blur(5px) brightness(60%)'}
+                            w='100%'
+                            maxH='400px'
+                            alt='Images may take a minute to load, reload if necessary'
+                            fit='cover'
+                        />
+                    }
+                    {post.content.data.video &&
+                        ((post.content.encryptedBody && !unencrypted) ?
+                            <Flex w='100%' h='200px' backgroundColor='#AEAEAE'></Flex>
+                            :
+                            <iframe
+                                style={{ width: '100%', maxHeight: '400px', height: '100%' }}
+                                src={"https://lvpr.tv?v=" + post.content.data.video.playbackId}
+                                frameborder="0"
+                                allowfullscreen
+                                allow="encrypted-media"
+                                sandbox="allow-scripts"
+                            >
+                            </iframe>
+                        )
+                    }
                     {post.content.encryptedBody && !unencrypted &&
                         <Flex w='50%' position='absolute' flexDirection='column' top='10%'>
                             <Image src='/lock.svg' h='60px' />
@@ -118,7 +136,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
             <Flex mt='20px' alignItems='center' justifyContent='space-between' w='40%'>
                 <Flex alignItems='center' cursor='pointer' onClick={handleLike}>
                     <Text fontSize='xs' color='brand.500'>{post.count_replies} Comments</Text>
-                    <Image src='/comment.svg' ml='5px' boxSize={3}/>
+                    <Image src='/comment.svg' ml='5px' boxSize={3} />
                 </Flex>
                 <Flex alignItems='center' cursor='pointer' onClick={handleLike}>
                     <Text fontSize='xs' color='brand.500'>{post.count_likes} Likes</Text>

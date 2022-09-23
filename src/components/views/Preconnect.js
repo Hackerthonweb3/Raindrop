@@ -1,5 +1,5 @@
 import { CheckIcon } from "@chakra-ui/icons";
-import { Flex, Text, Spinner } from "@chakra-ui/react"
+import { Flex, Text, Spinner, Image } from "@chakra-ui/react"
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
@@ -20,7 +20,9 @@ const Preconnect = () => {
     //console.log('Chains', SUPPORTED_CHAINS);
 
     return (
-        <Flex alignItems='center' flexDirection='column' justifyContent='center' h='100vh' w='100vw'>
+        <Flex alignItems='center' flexDirection='column' justifyContent='center' h='100vh' w='100vw' position='relative'>
+
+            <Image src='/Logo.svg' maxW='30%' left='20px' top='20px' position='absolute' />
 
             {isConnected && connecting &&
                 <Flex alignItems='center' mb='20px'>
@@ -44,10 +46,10 @@ const Preconnect = () => {
                             gettingUser ?
                             <CheckIcon color='green' boxSize={5} />
                             :
-                            ((SUPPORTED_CHAINS.includes(chain.id) && orbisChain == chain.id) ?
-                                <CheckIcon color='green' boxSize={5} />
-                                :
+                            ((!SUPPORTED_CHAINS.includes(chain.id) && orbisChain && orbisChain != chain.id) ?
                                 <Spinner color="brand.500" />
+                                :
+                                <CheckIcon color='green' boxSize={5} />
                             )
                         }
                         <Text fontSize='xl' fontWeight='semibold' ml='10px'>Select proper chain (the one in which you created your account ({CHAIN_NAMES[orbisChain]}))</Text>

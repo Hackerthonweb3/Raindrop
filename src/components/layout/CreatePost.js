@@ -4,10 +4,11 @@ import { useAccount, useNetwork } from "wagmi";
 import { useOrbis } from "../../utils/context/orbis";
 import { FileUploader } from "react-drag-drop-files";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
-import { raindropGroup } from "../../utils/constants";
+import { CHAIN_NAMES, raindropGroup } from "../../utils/constants";
 import { useLock } from "../../utils/hooks/subgraphLock";
 import { utils } from "ethers";
 import Blockies from 'react-blockies';
+import { getFileStatus, getUploadURL, uploadFile } from "../../utils/livepeer";
 
 const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPosts }) => {
 
@@ -15,7 +16,8 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
     const [postVisibility, setPostVisibility] = useState('public');
-    const [picture, setPicture] = useState();
+    const [file, setFile] = useState();
+    const [loadingText, setLoadingText] = useState('Publishing');
     const [publishing, setPublishing] = useState(false);
 
     const { address } = useAccount();
@@ -39,26 +41,39 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
             context: raindropGroup
         }
 
-        //Upload image to IPFS
-        if (picture) {
-            try {
-                const cid = await client.put([picture], { wrapWithDirectory: false })
+        if (file) {
+            if (file.type == 'video/mp4') { //Upload video to Livepeer
+                setLoadingText('Uploading video');
+                const vid = await uploadVideo();
                 postData.data = {
-                    cover: cid
+                    video: {
+                        id: vid.id,
+                        playbackId: vid.playbackId
+                    }
                 }
-                console.log('Picture uploaded');
-            } catch (err) {
-                //TODO handle err
-                console.error(err);
-                return;
+            } else { //Upload image to IPFS
+                try {
+                    setLoadingText('Uploading Image');
+                    const cid = await client.put([file], { wrapWithDirectory: false })
+                    postData.data = {
+                        cover: cid
+                    }
+                    console.log('Picture uploaded');
+                } catch (err) {
+                    //TODO handle err
+                    console.error(err);
+                    return;
+                }
             }
         }
+
+        setLoadingText('Publishing Post');
 
         let res;
         if (postVisibility == 'fans') { //Gated post
             res = await orbis.createPost(postData, {
                 type: 'token-gated',
-                chain: chain.name.toLowerCase(),
+                chain: CHAIN_NAMES[lock.chain].toLowerCase(),
                 contractType: 'ERC721',
                 contractAddress: lock.address,
                 minTokenBalance: "1" //Only 1 NFT as key
@@ -73,18 +88,26 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         emptyData()
         getPosts && getPosts();
     }
-    
+
     const emptyData = () => {
+        setLoadingText('Publishing');
         setText('');
-        setPicture(null);
+        setFile(null);
         setTitle('');
     }
 
-    const handleFile = (file) => {
-        setPicture(file);
+    const handleFile = (_file) => {
+        setFile(_file);
     }
 
-    console.log(picture);
+    const uploadVideo = async () => {
+        const { url, asset } = await getUploadURL();
+        console.log('Livepeer URL', url);
+        await uploadFile(url, file);
+        return (asset);
+    }
+
+    console.log(file);
 
     return (
         <Flex
@@ -129,7 +152,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     size='md'
                 />
 
-                <FileUploader width='100%' handleChange={handleFile} types={["JPG", "PNG", "GIF"]}>
+                <FileUploader width='100%' handleChange={handleFile} types={["JPG", "PNG", "GIF", "MP4"]}>
                     <Flex
                         my='20px'
                         cursor='pointer'
@@ -139,12 +162,12 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                         px='50px'
                         py='30px'
                         flexDirection='column'
-                        backgroundColor={picture ? 'gray' : 'white'} 
+                        backgroundColor={file ? 'gray' : 'white'}
                         display={active ? 'flex' : 'none'}
                         border='1px dashed #D5D5D5'
                     >
                         {/*TODO add icon */}
-                        <Button px='30px' size='xs' colorScheme='brandLight' color='brand.500'>{picture ? picture.name : 'Drop or select file'}</Button>
+                        <Button px='30px' size='xs' colorScheme='brandLight' color='brand.500'>{file ? file.name : 'Drop or select file'}</Button>
                         <Text fontSize='xs' color='#848484'>Any JPG, PNG, GIF</Text>
                     </Flex>
                 </FileUploader>
@@ -187,7 +210,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                         w='auto'
                         colorScheme='brand'
                         isLoading={publishing}
-                        loadingText='Publishing'
+                        loadingText={loadingText}
                     >Publish</Button>
                 </Flex>
             </Flex>

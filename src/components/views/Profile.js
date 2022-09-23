@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { useAccount, useNetwork } from "wagmi";
-import { CHAIN_NAMES, raindropGroup, subgraphURLs } from "../../utils/constants";
+import { CHAIN_NAMES, DECIMALS, raindropGroup, subgraphURLs } from "../../utils/constants";
 import { useOrbis } from "../../utils/context/orbis";
 import { useLock } from "../../utils/hooks/subgraphLock";
 import CreatePost from "../layout/CreatePost";
@@ -131,7 +131,7 @@ const Profile = () => {
         }
 
         //TODO change localhost
-        const uri = 'https://app.unlock-protocol.com/checkout?redirectUri=' + 'localhost:3000' + location.pathname + '&paywallConfig=' + encodeURIComponent(JSON.stringify(paywallConfig));
+        const uri = 'https://app.unlock-protocol.com/checkout?redirectUri=' + 'https://raindrop-gold.vercel.app/' + location.pathname + '&paywallConfig=' + encodeURIComponent(JSON.stringify(paywallConfig));
         window.location.href = uri;
     }
 
@@ -202,7 +202,7 @@ const Profile = () => {
                     borderColor='brand.500'
                 >
                     <Flex mt='15px' flexDirection='column' alignItems='center' position='absolute' left='30px'>
-                        <Text borderRadius='7px' py='4px' px='8px' border='1px solid' borderColor='brand.500'>{lock ? '$' + ethers.utils.formatEther(lock.price) : 'N/A'}</Text>
+                        <Text borderRadius='7px' py='4px' px='8px' border='1px solid' borderColor='brand.500'>{lock ? '$' + ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) : 'N/A'}</Text>
                         <Text mt='5px' color='#ADADAD'>Per Month</Text>
                     </Flex>
 

@@ -1,7 +1,7 @@
 import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Image, Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
-import { unlockAddress, time, currencies, raindropGroup, CHAIN_NAMES } from '../../utils/constants';
+import { unlockAddress, time, CURRENCIES, raindropGroup, CHAIN_NAMES } from '../../utils/constants';
 import { useOrbis } from "../../utils/context/orbis";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
 import { FileUploader } from "react-drag-drop-files";
@@ -79,11 +79,10 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
         setLoading(true);
 
-        if (price != '' && price < 0) {
+        if (price != '' && price > 0) {
             if (!lock) {
                 console.log('Deploying');
                 const walletService = new WalletService(unlockAddress);
-                console.log(walletService);
 
                 await walletService.connect(provider, signer.data);
 
@@ -98,7 +97,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                         maxNumberOfKeys: ethers.constants.MaxUint256.toString(),
                         expirationDuration: time,
                         keyPrice: price.toString(), //walletService already transforms to wei
-                        currencyContractAddress: currencies[chain.id]
+                        currencyContractAddress: CURRENCIES[chain.id]
                     }, (err, hash) => {
                         setMinting(true);
                         console.log(err, hash)
@@ -123,14 +122,23 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     console.error('Error joining group', orbisRes);
                 }
 
-                //Mint yourself an NFT (necessary to decrypt your own posts)
-                const key = await walletService.grantKey({
-                    lockAddress: createdLockAddress,
-                    recipient: address
-                })
-
-                console.log(key);
-
+                console.log('Granting key...');
+                try {
+                    //Mint yourself an NFT (necessary to decrypt your own posts)
+                    const key = await walletService.grantKey({
+                        lockAddress: createdLockAddress,
+                        recipient: address
+                    })
+                    console.log('Key granted', key);
+                } catch (err) {
+                    //TODO handle error
+                    console.log('Error granting key', err);
+                    setMinting(false);
+                    setLoading(false);
+                    return;
+                }
+                
+                setLoading(false);
                 setMinting(false);
             } else { //Update membership
                 console.log('Updating', lock.address);
