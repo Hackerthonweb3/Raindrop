@@ -62,6 +62,7 @@ const EditPopup = (props) => {
 export const EditMembership = ({ lock, cancelButton = true, border = true, setEditing, setMinting }) => {
 
     const [price, setPrice] = useState('');
+    const [creatorDescription, setCreatorDescription] = useState('');
     const [loading, setLoading] = useState(false);
 
     const provider = useProvider()
@@ -71,80 +72,103 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
     const { address } = useAccount();
 
     const handleSave = async () => {
-        if (price == '' || price < 0) {
+        if (creatorDescription == '' && (price == '' || price < 0)) { //No new data
             //TODO set error message
             return;
         }
 
         setLoading(true);
 
-        if (!lock) {
-            console.log('Deploying');
-            const walletService = new WalletService(unlockAddress);
-            console.log(walletService);
+        if (price != '' && price < 0) {
+            if (!lock) {
+                console.log('Deploying');
+                const walletService = new WalletService(unlockAddress);
+                console.log(walletService);
 
-            await walletService.connect(provider, signer.data);
+                await walletService.connect(provider, signer.data);
 
-            console.log('Connected')
+                console.log('Connected')
 
-            let createdLockAddress;
+                let createdLockAddress;
 
-            try {
-                createdLockAddress = await walletService.createLock({
-                    publicLockVersion: 11,
-                    name: user.username + " Raindrop", //Adding raindrop to be able to use it in subgraph (user could have other locks for other stuff)
-                    maxNumberOfKeys: ethers.constants.MaxUint256.toString(),
-                    expirationDuration: time,
-                    keyPrice: price.toString(), //walletService already transforms to wei
-                    currencyContractAddress: currencies[chain.id]
-                }, (err, hash) => {
-                    setMinting(true);
-                    console.log(err, hash)
-                    if (err) {
-                        //TODO handle error
-                        setMinting(false);
-                        setLoading(false);
-                    }
+                try {
+                    createdLockAddress = await walletService.createLock({
+                        publicLockVersion: 11, //TODO check if needed
+                        name: user.username + " Raindrop", //Adding raindrop to be able to use it in subgraph (user could have other locks for other stuff)
+                        maxNumberOfKeys: ethers.constants.MaxUint256.toString(),
+                        expirationDuration: time,
+                        keyPrice: price.toString(), //walletService already transforms to wei
+                        currencyContractAddress: currencies[chain.id]
+                    }, (err, hash) => {
+                        setMinting(true);
+                        console.log(err, hash)
+                        if (err) {
+                            //TODO handle error
+                            setMinting(false);
+                            setLoading(false);
+                        }
+                    })
+                } catch (err) {
+                    //TODO handle error
+                    setMinting(false);
+                    setLoading(false);
+                    return;
+                }
+
+                console.log('Minted', createdLockAddress);
+
+                //Set their membership true in Orbis
+                const orbisRes = await orbis.setGroupMember(raindropGroup, true);
+                if (orbisRes.status != 200) {
+                    console.error('Error joining group', orbisRes);
+                }
+
+                //Mint yourself an NFT (necessary to decrypt your own posts)
+                const key = await walletService.grantKey({
+                    lockAddress: createdLockAddress,
+                    recipient: address
                 })
-            } catch (err) {
-                //TODO handle error
+
+                console.log(key);
+
                 setMinting(false);
-                setLoading(false);
-                return;
+            } else { //Update membership
+                console.log('Updating', lock.address);
+
+                //Check you're in the right network
+                if (chain.id != lock.chain) {
+                    alert('Make sure you are in the right chain. Then try again')
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x' + lock.chain.toString(16) }]
+                    })
+                }
+
+                const walletService = new WalletService(unlockAddress);
+
+                await walletService.connect(provider, signer.data);
+
+                console.log('Connected')
+
+                const tx = await walletService.updateKeyPrice({
+                    lockAddress: lock.address,
+                    keyPrice: price.toString() //walletService already transforms to wei
+                })
+
+                console.log(tx)
+            }
+        }
+
+        //Set creatorDescription
+        if (creatorDescription != '') {
+            const newData = user;
+            newData.data = {
+                creatorDescription: creatorDescription
             }
 
-            console.log('Minted', createdLockAddress);
+            const orbisRes = await orbis.updateProfile(newData);
 
-            //Set their membership true in Orbis
-            const orbisRes = await orbis.setGroupMember(raindropGroup, true);
-            if (orbisRes.status != 200) {
-                console.error('Error joining group', orbisRes);
-            }
-
-            //Mint yourself an NFT (necessary to decrypt your own posts)
-            const key = await walletService.grantKey({
-                lockAddress: createdLockAddress,
-                recipient: address
-            })
-
-            console.log(key);
-
-            setMinting(false);
-        } else { //Update membership
-            console.log('Updating', lock.address);
-            const walletService = new WalletService(unlockAddress);
-            console.log(walletService);
-
-            await walletService.connect(provider, signer.data);
-
-            console.log('Connected')
-
-            const tx = await walletService.updateKeyPrice({
-                lockAddress: lock.address,
-                keyPrice: price.toString() //walletService already transforms to wei
-            })
-
-            console.log(tx)
+            console.log('Updated Oribs data', orbisRes);
         }
 
         setLoading(false);
@@ -166,6 +190,15 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                         value={price}
                         onChange={e => setPrice(e.target.value)}
                         type='number'
+                    />
+                    <FormLabel mt='20px' fontWeight='semibold'>Membership Description <span style={{ color: '#848484' }}>(optional)</span></FormLabel>
+                    <Textarea
+                        variant='outline'
+                        placeholder="Add a brief description of what it is you do."
+                        value={creatorDescription}
+                        onChange={e => setCreatorDescription(e.target.value)}
+                        resize='vertical'
+                        h='60px'
                     />
                     <Flex alignItems='center' mt='20px'>
                         <Checkbox defaultChecked />
@@ -302,7 +335,7 @@ const EditProfile = (props) => {
                             alignItems='center'
                             backgroundColor={profilePicture ? 'gray' : 'white'}
                         >
-                            <Image src='/camera.svg' mb='8px'/>
+                            <Image src='/camera.svg' mb='8px' />
                             <Text fontWeight='semibold' noOfLines={2} w='60%' color='brand.500' align='center'>Add new profile photo</Text>
                         </Flex>
                     </FileUploader>
@@ -310,7 +343,7 @@ const EditProfile = (props) => {
                     <FormLabel mt='20px' fontWeight='semibold'>Profile description</FormLabel>
                     <Textarea
                         variant='filled'
-                        placeholder="Add a brief description of what it is you do."
+                        placeholder="Add a brief description of who you are."
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         resize='vertical'
@@ -327,7 +360,7 @@ const EditProfile = (props) => {
                             w='100%'//'60%'
                             backgroundColor={cover ? 'gray' : 'white'}
                         >
-                            <Image src='/img.svg' mr='10px'/>
+                            <Image src='/img.svg' mr='10px' />
                             Add cover image
                         </Flex>
                     </FileUploader>

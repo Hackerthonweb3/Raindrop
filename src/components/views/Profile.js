@@ -15,6 +15,7 @@ import Membership from "../layout/Membership";
 import PostPreview from "../layout/PostPreview";
 import formatAddress from "../../utils/formatAddress";
 import Minting from "../layout/Minting";
+import { AddIcon } from "@chakra-ui/icons";
 
 const Profile = () => {
 
@@ -110,7 +111,7 @@ const Profile = () => {
 
     const handleSubscribe = async () => {
         //Change to Creator's lock chain
-        if(chain.id != lock.chain) {
+        if (chain.id != lock.chain) {
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: '0x' + lock.chain.toString(16) }]
@@ -159,23 +160,26 @@ const Profile = () => {
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
             <Flex //Cover Image
-                p='30px'
+                position='relative'
                 minH='250px'
                 maxH='250px'
                 w='100%'
                 borderBottom='1px solid'
                 borderColor='brand.400'
-                alignItems='flex-end'
-                justifyContent='end'
+                alignItems='center'
+                justifyContent='center'
                 backgroundImage={user && user.details.profile && 'url(https://' + user.details.profile.cover + '.ipfs.w3s.link)'} //TODO add default cover if no cover
                 backgroundSize='cover'
                 backgroundPosition='center'
-                backgroundColor={(user && user.details.profile && user.details.profile.cover) ? 'white' : 'gray'}
+                backgroundColor={(user && user.details.profile && user.details.profile.cover) ? 'white' : '#C0C0C0'}
                 cursor={(myProfile && user && user.details.profile && !user.details.profile.cover) && 'pointer'}
                 onClick={() => { if (myProfile && user && user.details.profile && !user.details.profile.cover) { setEditing(true) } }}
                 zIndex={1}
             >
-                <Button display={myProfile ? 'normal' : 'none'} onClick={() => setEditing(true)} colorScheme='brand' borderRadius='70px' px='40px'>Edit Profile</Button>
+                {user && user.details.profile && !user.details.profile.cover &&
+                    <AddIcon color='white' boxSize={10}/>
+                }
+                <Button position='absolute' right='30px' bottom='30px' display={myProfile ? 'normal' : 'none'} onClick={() => setEditing(true)} colorScheme='brand' borderRadius='70px' px='40px'>Edit Profile</Button>
             </Flex>
 
 
@@ -254,15 +258,35 @@ const Profile = () => {
                         (
                             lock
                                 ?
-                                <Membership self price={ethers.utils.formatEther(lock.price)} username={user && user.username} lock={lock || null} />
+                                <Membership
+                                    self
+                                    price={ethers.utils.formatEther(lock.price)}
+                                    username={user && user.username}
+                                    lock={lock || null}
+                                    creatorDescription={user && user.details?.profile?.data?.creatorDescription}
+                                    exclusivePostCount={posts.filter(p => p.content.encryptedBody).length}
+                                />
                                 :
                                 <Flex pb='40px'>
-                                    <EditMembership lock={lock} cancelButton={false} border={false} setMinting={setMinting}/>
+                                    <EditMembership
+                                        lock={lock}
+                                        cancelButton={false}
+                                        border={false}
+                                        setMinting={setMinting}
+                                    />
                                 </Flex>
 
                         )
                         :
-                        <Membership price={lock && ethers.utils.formatEther(lock.price)} username={user && user.username} lock={lock || null} />
+                        <Membership
+                            price={lock && ethers.utils.formatEther(lock.price)}
+                            username={user && user.username}
+                            lock={lock || null}
+                            creatorDescription={user && user.details?.profile?.data?.creatorDescription}
+                            member={isMember}
+                            exclusivePostCount={posts.filter(p => p.content.encryptedBody).length}
+                            handleSubscribe={handleSubscribe}
+                        />
                     )
                 }
 
@@ -270,7 +294,7 @@ const Profile = () => {
 
             {minting && <Minting />}
 
-            {searchParams.get('editing') && <EditPopup setEditing={setEditing} lock={lock} setMinting={setMinting}/>}
+            {searchParams.get('editing') && <EditPopup setEditing={setEditing} lock={lock} setMinting={setMinting} />}
         </Flex >
     )
 }

@@ -137,8 +137,8 @@ export default function LandingPage() {
         <Flex alignItems='center' justifyContent='space-between' w='100%' p='0 20px'>
           <div style={{ cursor: 'pointer', marginLeft: '20px', transform: 'rotate(45deg)', width: '30px', height: '30px', borderBottom: '5px solid #F9D520', borderLeft: '5px solid #F9D520' }} />
           <Image src='profile1.svg' maxH='550px' />
-          <Image src='profile1.svg' maxH='550px' />
-          <Image src='profile1.svg' maxH='550px' />
+          <Image src='profile2.svg' maxH='550px' />
+          <Image src='profile3.svg' maxH='550px' />
           <div style={{ cursor: 'pointer', marginRight: '20px', transform: 'rotate(225deg)', width: '30px', height: '30px', borderBottom: '5px solid #F9D520', borderLeft: '5px solid #F9D520' }} />
         </Flex>
       </Flex>
@@ -229,12 +229,12 @@ export default function LandingPage() {
           </Text>
           <div style={{ borderBottom: 'solid 2px rgba(191, 236, 231, 1)', width: '70%' }} />
           <Flex justifyContent='space-between' alignItems='center' maxW='70vw'>
-            <Image src='ethLogo.svg' mr='20px' height='70%' />
+            <Image src='/ethLogo.svg' mr='20px' height='70%' />
             <Flex flexDirection='column'>
               <Text fontSize='2xl' fontWeight='bold'>Token gated content</Text>
               <Text fontSize='xl'>Creators have the ability to token gate their premium content that is only accessible by fans financially supporting their work.</Text>
             </Flex>
-            <Image src='LockedPost.png' />
+            <Image src='/LockedPost.png' />
           </Flex>
           <div style={{ borderBottom: 'solid 2px rgba(191, 236, 231, 1)', width: '70%' }} />
         </Flex>
@@ -322,14 +322,13 @@ export default function LandingPage() {
         </Flex>
         <Flex>
           <RoadmapBox title='Multi-Chain Support' text={phase4} completed={2} />
-          <Image src='p2arrow.svg' maxH='200px' mt='20px' />
+          <Image src='p2arrow.svg' maxH='200px' />
         </Flex>
         <Flex alignItems='center' justifyContent='center' pt='160px'>
-          <Image src='p4arrow.svg' maxH='200px' mt='20px' position='absolute' left='22vw' />
+          <Image src='p4arrow.svg' maxH='200px' mb='120px' position='absolute' left='22vw' />
           <Button
             colorScheme='yellow'
             color='white'
-            mr='10px'
             variant='solid'
             borderRadius='20px'
             boxShadow='0px 17px 46px rgba(0, 0, 0, 0.25)'
@@ -338,7 +337,7 @@ export default function LandingPage() {
           >Get started</Button>
         </Flex>
 
-        <Flex justifyContent='center' mt='150px' pb='100px'>
+        <Flex justifyContent='space-evenly' mt='150px' pb='100px'>
           <Flex
             alignItems='center'
             justifyContent='space-around'

@@ -3,7 +3,7 @@ import { Flex, Text, Spinner } from "@chakra-ui/react"
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
-import { SUPPORTED_CHAINS } from "../../utils/constants";
+import { CHAIN_NAMES, SUPPORTED_CHAINS } from "../../utils/constants";
 import { useOrbis } from "../../utils/context/orbis";
 
 const Preconnect = () => {
@@ -50,7 +50,7 @@ const Preconnect = () => {
                                 <Spinner color="brand.500" />
                             )
                         }
-                        <Text fontSize='xl' fontWeight='semibold' ml='10px'>Select proper chain (the one in which you created your account)</Text>
+                        <Text fontSize='xl' fontWeight='semibold' ml='10px'>Select proper chain (the one in which you created your account ({CHAIN_NAMES[orbisChain]}))</Text>
                     </Flex>
                     <Flex alignItems='center' mb='20px'>
                         {isConnected &&

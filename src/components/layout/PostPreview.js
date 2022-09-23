@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import formatAddress from "../../utils/formatAddress";
 import Blockies from 'react-blockies';
 import { utils } from "ethers";
+import { LikeIcon } from "../Icons";
 
 const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 
@@ -17,6 +18,10 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 
     const handleProfileClick = () => {
         navigate('/app/profile/' + post.creator_details.metadata.address);
+    }
+
+    const handleLike = async () => {
+        await orbis.react(post.stream_id, 'like')
     }
 
     const decryptBody = async () => {
@@ -111,8 +116,14 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
             >{post.content.encryptedBody ? (unencrypted || (decrypting ? 'Decrypting...'/*TODO fix with nonmembers*/ : "Locked")) : post.content.body}</Text>
 
             <Flex mt='20px' alignItems='center' justifyContent='space-between' w='40%'>
-                <Text fontSize='xs' color='brand.500'>{post.count_replies} Comments</Text>
-                <Text fontSize='xs' color='brand.500'>{post.count_likes} Likes</Text>
+                <Flex alignItems='center' cursor='pointer' onClick={handleLike}>
+                    <Text fontSize='xs' color='brand.500'>{post.count_replies} Comments</Text>
+                    <Image src='/comment.svg' ml='5px' boxSize={3}/>
+                </Flex>
+                <Flex alignItems='center' cursor='pointer' onClick={handleLike}>
+                    <Text fontSize='xs' color='brand.500'>{post.count_likes} Likes</Text>
+                    <LikeIcon color='brand.500' ml='5px' boxSize={3} />
+                </Flex>
             </Flex>
         </Flex>
     )
