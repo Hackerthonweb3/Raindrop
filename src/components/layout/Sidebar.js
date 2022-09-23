@@ -1,10 +1,12 @@
-import { Flex, Image, Text, Button, Spacer, createIcon } from "@chakra-ui/react"
-import { useAccount, useDisconnect } from "wagmi"
+import { Flex, Image, Text, Button, Spacer, createIcon, Switch } from "@chakra-ui/react"
+import { useAccount, useDisconnect, useNetwork, useSigner } from "wagmi"
 import { useOrbis } from '../../utils/context/orbis';
 import { useLocation, useNavigate } from "react-router-dom";
 import Blockies from 'react-blockies';
 import formatAddress from "../../utils/formatAddress";
 import { utils } from "ethers";
+import { useEffect, useState } from "react";
+import { isUserSubscribed, turnOffNotifications, turnOnNotifications } from "../../utils/epns";
 
 const Tab = (props) => {
     return (
@@ -20,9 +22,13 @@ const Sidebar = ({ setCreatingPost }) => {
     const { user, orbis } = useOrbis();
     const { address } = useAccount();
     const { disconnect } = useDisconnect()
+    const { chain } = useNetwork();
+    const signer = useSigner();
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    const [notifications, setNotifications] = useState(false);
 
     const handleMyProfile = () => {
         navigate('/app/profile/' + address || '')
@@ -50,6 +56,38 @@ const Sidebar = ({ setCreatingPost }) => {
     const handleCreate = () => {
         setCreatingPost(true);
     }
+
+    const handleToggleNotifications = async (e) => {
+        setNotifications(!notifications); //For better UX
+
+        if(chain.id != 80001) { //If not Mumbai, where EPNS test is
+            alert('Please change to Mumbai where EPNS is located')
+            await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x13881' }] //Mumbai hex (80001 to base16)
+            })
+        }
+
+        if (notifications) {
+            if (!await turnOffNotifications(address, signer)) { //If not, failed
+                setNotifications(true) //Return to original
+            }
+        } else {
+            if (!await turnOnNotifications(address, signer)) { //If not, failed
+                setNotifications(false) //Return to original
+            }
+        }
+    }
+
+    const getNotif = async () => {
+        const a = await isUserSubscribed(address);
+        console.log('NOTIF', a)
+        setNotifications(a)
+    }
+
+    useEffect(() => {
+        getNotif();
+    }, [])
 
     return (
         <Flex position='fixed' overflow='hidden' flexDirection='column' alignItems='center' h='100vh' minW='250px' maxW='250px' borderRight='1px solid' borderColor='brand.400'>
@@ -95,6 +133,11 @@ const Sidebar = ({ setCreatingPost }) => {
             <Button onClick={handleCreate} borderRadius='70px' mt='50px' w='70%' colorScheme='brand' color='white'>Create</Button>
 
             <Spacer />
+
+            <Flex alignItems='center' mb='10px' w='100%'>
+                <Switch ml='10px' isChecked={notifications} onChange={handleToggleNotifications} />
+                <Text ml='8px' fontWeight='semibold'>EPNS notifications</Text>
+            </Flex>
 
             {address && user &&
                 <Flex w='100%' p='10px' alignItems='center' borderBottom='1px solid' borderTop='1px solid' borderColor='brand.500'>

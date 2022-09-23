@@ -2,7 +2,7 @@ import { Flex, Button, Text, Image } from "@chakra-ui/react"
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useNetwork, useSigner } from "wagmi";
 import { CHAIN_NAMES, DECIMALS, raindropGroup, subgraphURLs } from "../../utils/constants";
 import { useOrbis } from "../../utils/context/orbis";
 import { useLock } from "../../utils/hooks/subgraphLock";
@@ -16,6 +16,7 @@ import PostPreview from "../layout/PostPreview";
 import formatAddress from "../../utils/formatAddress";
 import Minting from "../layout/Minting";
 import { AddIcon } from "@chakra-ui/icons";
+import { getNotifications, sendNotification, turnOnNotifications } from "../../utils/epns";
 
 const Profile = () => {
 
@@ -33,6 +34,8 @@ const Profile = () => {
     const lock = useLock(ethers.utils.getAddress(usingAddress));
 
     const location = useLocation();
+
+    const signer = useSigner();
 
     //TODO add ENS compatibility
     const { user: myUser, orbis } = useOrbis()
@@ -157,6 +160,23 @@ const Profile = () => {
         }
     }, [usingAddress, myUser])
 
+    const testEPNS = () => {
+        sendNotification('TITLEasdfasdfasdf', 'asdfasdfasBODY test',
+            [
+                'eip155:80001:0x4281aE3793A513D2e1Bf600948B0b1b837Ab37ad', //Acc2 chrome
+                'eip155:80001:0xa02ae6323F20Ef8666B0144884543AcfeA18bCF3', //Acc3 chrome
+                'eip155:80001:0x13a0cB5D1aA25db5a85E95f4597771c9e459fd2d' //Testing brave
+            ])
+    }
+
+    const testGetNotif = () => {
+        getNotifications('0x4281aE3793A513D2e1Bf600948B0b1b837Ab37ad')
+    }
+
+    const testOptIn = () => {
+        turnOnNotifications(myAddress, signer);
+    }
+
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
             <Flex //Cover Image
@@ -176,8 +196,8 @@ const Profile = () => {
                 onClick={() => { if (myProfile && user && user.details.profile && !user.details.profile.cover) { setEditing(true) } }}
                 zIndex={1}
             >
-                {user && user.details.profile && !user.details.profile.cover &&
-                    <AddIcon color='white' boxSize={10}/>
+                {user && user.details.profile && !user.details.profile.cover && myProfile &&
+                    <AddIcon color='white' boxSize={10} />
                 }
                 <Button position='absolute' right='30px' bottom='30px' display={myProfile ? 'normal' : 'none'} onClick={() => setEditing(true)} colorScheme='brand' borderRadius='70px' px='40px'>Edit Profile</Button>
             </Flex>
@@ -291,6 +311,10 @@ const Profile = () => {
                 }
 
             </Flex>
+
+            <Button onClick={testEPNS}>TEST EPNS</Button>
+            <Button onClick={testGetNotif}>TEST Notif</Button>
+            <Button onClick={testOptIn}>TEST OPT IN</Button>
 
             {minting && <Minting />}
 

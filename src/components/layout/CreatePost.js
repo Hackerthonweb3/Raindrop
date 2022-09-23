@@ -1,14 +1,44 @@
 import { Flex, Input, Textarea, Text, RadioGroup, Radio, Spacer, Button, Image, Tooltip } from "@chakra-ui/react";
 import { useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useOrbis } from "../../utils/context/orbis";
 import { FileUploader } from "react-drag-drop-files";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
-import { CHAIN_NAMES, raindropGroup } from "../../utils/constants";
+import { CHAIN_NAMES, raindropGroup, subgraphURLs } from "../../utils/constants";
 import { useLock } from "../../utils/hooks/subgraphLock";
-import { utils } from "ethers";
+import { ethers, utils } from "ethers";
 import Blockies from 'react-blockies';
-import { getFileStatus, getUploadURL, uploadFile } from "../../utils/livepeer";
+import { getUploadURL, uploadFile } from "../../utils/livepeer";
+import { sendNotification } from "../../utils/epns";
+
+const notify = async (username, title, lock, img) => {
+
+    //Get subscribers
+    const res = await fetch(subgraphURLs[lock.chain], {
+        method: 'POST',
+        contentType: 'application/json',
+        body: JSON.stringify(
+            {
+                query: `{
+                    locks(where: {id:"${lock.address}"}) {
+                        keys{
+                          owner {
+                            address
+                          }
+                        }
+                      }
+                }`
+            }
+        )
+    })
+
+    //Get addresses
+    const keys = (await res.json()).data.locks[0].keys
+    const addresses = keys.map(k => ('eip155:80001:' + ethers.utils.getAddress(k.owner.address)))
+
+    //Notify
+    sendNotification(username + ' just posted', title, addresses, img || null)
+}
 
 const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPosts }) => {
 
@@ -22,7 +52,6 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
 
     const { address } = useAccount();
     const { orbis, user } = useOrbis();
-    const { chain } = useNetwork();
     const client = useWeb3Storage();
     const lock = useLock(address);
 
@@ -41,6 +70,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
             context: raindropGroup
         }
 
+        let cid; //Image IPFS
         if (file) {
             if (file.type == 'video/mp4') { //Upload video to Livepeer
                 setLoadingText('Uploading video');
@@ -54,7 +84,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
             } else { //Upload image to IPFS
                 try {
                     setLoadingText('Uploading Image');
-                    const cid = await client.put([file], { wrapWithDirectory: false })
+                    cid = await client.put([file], { wrapWithDirectory: false })
                     postData.data = {
                         cover: cid
                     }
@@ -83,6 +113,8 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         }
 
         console.log('Orbis response', res);
+        notify(user?.username || address, title, lock, file && file.type != 'video/mp4' ? 'https://' + cid + '.ipfs.w3s.link' : null)
+
         setPublishing(false);
         setActive(false);
         emptyData()
@@ -106,8 +138,6 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         await uploadFile(url, file);
         return (asset);
     }
-
-    console.log(file);
 
     return (
         <Flex

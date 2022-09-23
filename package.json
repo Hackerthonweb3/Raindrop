@@ -7,6 +7,7 @@
     "@chakra-ui/react": "^2.3.2",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@epnsproject/sdk-restapi": "^0.1.13",
     "@orbisclub/orbis-sdk": "^0.3.30",
     "@rainbow-me/rainbowkit": "^0.5.2",
     "@unlock-protocol/unlock-js": "^0.26.6",
