@@ -43,8 +43,6 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
         setDecrypting(false);
     }
 
-    console.log('POST', post)
-
     useEffect(() => {
         if (post.content.encryptedBody) { // Gated content
             decryptBody();

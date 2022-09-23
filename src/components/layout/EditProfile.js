@@ -1,7 +1,7 @@
-import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Image, Checkbox } from "@chakra-ui/react";
+import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Image, Checkbox, Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
-import { unlockAddress, time, CURRENCIES, raindropGroup, CHAIN_NAMES } from '../../utils/constants';
+import { unlockAddress, time, CURRENCIES, raindropGroup, CHAIN_NAMES, EXPLORERS } from '../../utils/constants';
 import { useOrbis } from "../../utils/context/orbis";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
 import { FileUploader } from "react-drag-drop-files";
@@ -70,6 +70,19 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
     const { chain } = useNetwork();
     const { user, orbis } = useOrbis();
     const { address } = useAccount();
+    const toast = useToast();
+
+    const doToast = (hash) => {
+        toast({
+            position: 'bottom-right',
+            isClosable: true,
+            render: () => (
+                <Box cursor='pointer' onClick={() => window.open(EXPLORERS[chain.id] + hash)} backgroundColor='brand.600' color='white' p='10px' borderRadius='7px'>
+                    Click me to see your transaction
+                </Box>
+            ),
+        })
+    }
 
     const handleSave = async () => {
         if (creatorDescription == '' && (price == '' || price < 0)) { //No new data
@@ -80,7 +93,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
         setLoading(true);
 
         if (price != '' && price > 0) {
-            if (!lock) {
+            if (!lock) { //Create Lock
                 console.log('Deploying');
                 const walletService = new WalletService(unlockAddress);
 
@@ -100,7 +113,8 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                         currencyContractAddress: CURRENCIES[chain.id]
                     }, (err, hash) => {
                         setMinting(true);
-                        console.log(err, hash)
+                        doToast(hash)
+
                         if (err) {
                             //TODO handle error
                             setMinting(false);
@@ -128,6 +142,15 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     const key = await walletService.grantKey({
                         lockAddress: createdLockAddress,
                         recipient: address
+                    }, (err, hash) =>{
+                        doToast(hash)
+
+                        if (err) {
+                            //TODO handle error
+                            console.log('ERROR granting key', err);
+                            setMinting(false);
+                            setLoading(false);
+                        }
                     })
                     console.log('Key granted', key);
                 } catch (err) {
@@ -137,7 +160,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     setLoading(false);
                     return;
                 }
-                
+
                 setLoading(false);
                 setMinting(false);
             } else { //Update membership
@@ -145,11 +168,13 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
                 //Check you're in the right network
                 if (chain.id != lock.chain) {
+                    setLoading(false);
                     alert('Make sure you are in the right chain. Then try again')
                     await window.ethereum.request({
                         method: 'wallet_switchEthereumChain',
                         params: [{ chainId: '0x' + lock.chain.toString(16) }]
                     })
+                    return;
                 }
 
                 const walletService = new WalletService(unlockAddress);
@@ -158,12 +183,16 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
                 console.log('Connected')
 
-                const tx = await walletService.updateKeyPrice({
+                await walletService.updateKeyPrice({
                     lockAddress: lock.address,
                     keyPrice: price.toString() //walletService already transforms to wei
-                })
+                }, (err, hash) => {
+                    doToast(hash)
 
-                console.log(tx)
+                    if(err){
+                        console.log('ERROR updating price', err);
+                    }
+                })
             }
         }
 

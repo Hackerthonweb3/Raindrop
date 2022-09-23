@@ -45,6 +45,14 @@ export const subgraphURLs = {
     80001: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/mumbai'
 }
 
+export const EXPLORERS = {
+    5: 'https://goerli.etherscan.io/tx/',
+    137: 'https://polygonscan.com/tx/',
+    10: 'https://optimistic.etherscan.io/tx/',
+    80001: 'https://mumbai.polygonscan.com/tx/'
+    
+}
+
 export const raindropGroup = 'kjzl6cwe1jw145te4josrvatq42gthq9dbifn2lwm8f6z2mqpmlvvueaanu0y8f'//'kjzl6cwe1jw14bdvi6eqt69eevrxkjc42wmi985s1siqhg4rt40rl1zrz529h5y'
 
 export const SUPPORTED_CHAINS = [5, 137, 10, 80001]; //TODO remove Goerli for production

@@ -168,7 +168,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     >
                         {/*TODO add icon */}
                         <Button px='30px' size='xs' colorScheme='brandLight' color='brand.500'>{file ? file.name : 'Drop or select file'}</Button>
-                        <Text fontSize='xs' color='#848484'>Any JPG, PNG, GIF</Text>
+                        <Text fontSize='xs' color='#848484'>Any JPG, PNG, MP4, GIF</Text>
                     </Flex>
                 </FileUploader>
 
