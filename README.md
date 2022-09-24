@@ -40,39 +40,39 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
     -   **3. Real time and transparent data visualization**
         -   Visualization of on-chain data to help creators understand their communities.
 
-## 💻 **How We made**
+## 💻 **How We Build on**
 
 ### Technological Implementation
 
 #### Tech Stack
 
--   Front-End: NextJS, React, Typescript, Rainbowkit/Wagmi, Chakra
+-   Front-End: React, Typescript, Rainbowkit/Wagmi, 
+-   Back-End: Ceramic, IPFS, Livepeer
 -   Contracts: Unlock Protocol
--   Back-End: Ceramic, Orbis, IPFS, Livepeer
--   Technologies: We are deployed on Polygon and Optimism
+-   Blockchain: We are deployed on Polygon and Optimism
 
 
 #### Data Portability
 
--   Ceramic：We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with NextJS to easily onboard every kind of use in any platform.
--   IPFS/Filecoin：To allow creators to do closed content with images on the decentralized networks. Also, to allow uploading of profile images on it.
--   Livepeer(if possible)：To allow creators to do closed content with movies on the decentralized networks.  
+-   **Ceramic**：We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with NextJS to easily onboard every kind of use in any platform.
+-   **IPFS/Filecoin**：To allow creators to do closed content with images on the decentralized networks. Also, to allow uploading of profile images on it.
+-   **Livepeer**：To allow creators to do closed content with movies on the decentralized networks.  
 
 #### Membership community made easy
 
--   Unlock：Subscription framework, using NFT as a proof of subscription to unlock exclusive creator streams.
--   Polygon：To deploy SBTs to the blockchain for low gas prices to prove that a user has met a person because of low transaction cost and privacy by using ZK.
--   Optimism：For creators to deploy membership NFT because of scalability.
--   The Graph:To make Raindrop a multi-chain application and the subgraph may really help us to do that for good UI/UX experience for not only users but also developers in our team.
--   EPNS(if possible)：It is used as a notification function for creator content’s update for fans.
--   Tellor(if possible)：Allowing creator to conduct giveaways for their subscriber. 
+-   **Unlock**：Subscription framework, using NFT as a proof of subscription to unlock exclusive creator streams.
+-   **Polygon**：To deploy SBTs to the blockchain for low gas prices to prove that a user has met a person because of low transaction cost and privacy by using ZK.
+-   **Optimism**：For creators to deploy membership NFT because of scalability.
+-   **The Graph**:To track Unlock smart contract deployments and NFTs (keys) owners to use quickly on the frontend. This makes Raindrop a multi-chain application and the subgraph really helps us to do that with good UI/UX experience for not only users, but also developers in our team.
+-   **EPNS**：It is used as a notification function for creator content’s update for fans.
+-   **Tellor**：Allowing creator to conduct giveaways for their subscriber. 
 
 
 #### Real time and transparent data visualization
 
--   ENS：It is used as one of the creator's profile information to increase their credibility.
--   Sismo(if possible)：To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
--   Worldcoin(if possible)：To prove that creators and fans is real human.
+-   **ENS**：It is used as one of the creator's profile information to increase their credibility.
+-   **Sismo**：To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
+-   **Worldcoin**：To prove that creators and fans is real human.
 
 
 ## ✨ **Potential Impact**
@@ -94,7 +94,7 @@ Having a well designed app/front-end giving creators the ability to token gate t
 
 ### Our Product Roadmap
 
-#### ① Enhance the UX of creators' contents by making them compatible with a variety of content formats, including text, video, photos, and audio.
+~~#### ① Enhance the UX of creators' contents by making them compatible with a variety of content formats, including text, video, photos, and audio.~~
 
 How creative and unique:
 
@@ -121,12 +121,10 @@ How creative and unique:
 
 -   Hidetaka Ko | Product Manager | We have been developing and operating Japan’s largest homestay matching service for 4 years as CEO/Co-Founder.
 -   0xYee | Full Stack Software Engineer | Working with a DAO the past 2 months.
--   Jonathan Cruz | UI/UX Designer | Specialize in designing and developing user interfaces and 3D digital assets.
 
 
 ### Resourses
 
--   [Polygonscan]()
--   [Medium]()
+-   [Polygonscan](https://polygonscan.com/address/0xE20f77345b037b4AaFacE1C0A541E7F2Eeee9986#code)
+-   [optimistic.etherscan](https://optimistic.etherscan.io/address/0x38D1672F444cb2ecf579C6aeE4F594d8d523e4d6#code)
 -   [Twitter](https://twitter.com/raindropcreator)
--   [Notion]()
