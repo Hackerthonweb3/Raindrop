@@ -102,15 +102,6 @@ export default function LandingPage() {
   const [amount, setAmount] = useState('6,183,232'); //for testing
   const [selected, setSelected] = useState(0);
 
-  const { isConnected, address } = useAccount()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if(isConnected && address) {
-      navigate('/app')
-    }
-  }, [isConnected])
-
   return (
     <Flex flexDirection='column' alignItems='center' w='100%'>
       <Header />

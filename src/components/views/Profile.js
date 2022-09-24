@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { useAccount, useNetwork, useSigner } from "wagmi";
-import { CHAIN_NAMES, DECIMALS, raindropGroup, subgraphURLs } from "../../utils/constants";
+import { CHAIN_NAMES, CURRENCIES, DECIMALS, raindropGroup, subgraphURLs } from "../../utils/constants";
 import { useOrbis } from "../../utils/context/orbis";
 import { useLock } from "../../utils/hooks/subgraphLock";
 import CreatePost from "../layout/CreatePost";
@@ -159,24 +159,24 @@ const Profile = () => {
             setUser(myUser);
         }
     }, [usingAddress, myUser])
-/*
-    const testEPNS = () => {
-        sendNotification('TITLEasdfasdfasdf', 'asdfasdfasBODY test',
-            [
-                'eip155:80001:0x4281aE3793A513D2e1Bf600948B0b1b837Ab37ad', //Acc2 chrome
-                'eip155:80001:0xa02ae6323F20Ef8666B0144884543AcfeA18bCF3', //Acc3 chrome
-                'eip155:80001:0x13a0cB5D1aA25db5a85E95f4597771c9e459fd2d' //Testing brave
-            ])
-    }
-
-    const testGetNotif = () => {
-        getNotifications('0x4281aE3793A513D2e1Bf600948B0b1b837Ab37ad')
-    }
-
-    const testOptIn = () => {
-        turnOnNotifications(myAddress, signer);
-    }
-*/
+    /*
+        const testEPNS = () => {
+            sendNotification('TITLEasdfasdfasdf', 'asdfasdfasBODY test',
+                [
+                    'eip155:80001:0x4281aE3793A513D2e1Bf600948B0b1b837Ab37ad', //Acc2 chrome
+                    'eip155:80001:0xa02ae6323F20Ef8666B0144884543AcfeA18bCF3', //Acc3 chrome
+                    'eip155:80001:0x13a0cB5D1aA25db5a85E95f4597771c9e459fd2d' //Testing brave
+                ])
+        }
+    
+        const testGetNotif = () => {
+            getNotifications('0x4281aE3793A513D2e1Bf600948B0b1b837Ab37ad')
+        }
+    
+        const testOptIn = () => {
+            turnOnNotifications(myAddress, signer);
+        }
+    */
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
             <Flex //Cover Image
@@ -268,7 +268,7 @@ const Profile = () => {
                     <div style={{ width: '100%' }}>
                         {myProfile && <CreatePost lock={lock} getPosts={getPosts} />}
 
-                        {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} isMember={isMember} handleSubscribe={handleSubscribe} price={lock ? ethers.utils.formatEther(lock.price) : null} />)}
+                        {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} isMember={isMember} handleSubscribe={handleSubscribe} price={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) : null} />)}
                     </div>
                 }
 
@@ -280,7 +280,7 @@ const Profile = () => {
                                 ?
                                 <Membership
                                     self
-                                    price={ethers.utils.formatEther(lock.price)}
+                                    price={ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain])}
                                     username={user && user.username}
                                     lock={lock || null}
                                     creatorDescription={user && user.details?.profile?.data?.creatorDescription}
@@ -299,7 +299,7 @@ const Profile = () => {
                         )
                         :
                         <Membership
-                            price={lock && ethers.utils.formatEther(lock.price)}
+                            price={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) : null}
                             username={user && user.username}
                             lock={lock || null}
                             creatorDescription={user && user.details?.profile?.data?.creatorDescription}

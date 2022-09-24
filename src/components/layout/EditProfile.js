@@ -102,7 +102,6 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                 console.log('Connected')
 
                 let createdLockAddress;
-
                 try {
                     createdLockAddress = await walletService.createLock({
                         publicLockVersion: 11, //TODO check if needed
@@ -112,6 +111,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                         keyPrice: price.toString(), //walletService already transforms to wei
                         currencyContractAddress: CURRENCIES[chain.id]
                     }, (err, hash) => {
+                        setEditing(false);
                         setMinting(true);
                         doToast(hash)
 
@@ -136,13 +136,14 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     console.error('Error joining group', orbisRes);
                 }
 
+                //Mint yourself an NFT (necessary to decrypt your own posts)
                 console.log('Granting key...');
                 try {
-                    //Mint yourself an NFT (necessary to decrypt your own posts)
                     const key = await walletService.grantKey({
                         lockAddress: createdLockAddress,
-                        recipient: address
-                    }, (err, hash) =>{
+                        recipient: address,
+                        expiration: ethers.constants.MaxUint256 //No expiration for owner
+                    }, (err, hash) => {
                         doToast(hash)
 
                         if (err) {
@@ -189,7 +190,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                 }, (err, hash) => {
                     doToast(hash)
 
-                    if(err){
+                    if (err) {
                         console.log('ERROR updating price', err);
                     }
                 })
@@ -210,7 +211,12 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
         setLoading(false);
         setEditing && setEditing(false); //Close popup
-        window.location.reload()
+        toast({
+            position: 'bottom-right',
+            status: 'success',
+            description: 'Membership created! Please wait a few seconds and reload to reflect changes'
+        })
+        //window.location.reload()
     }
 
     return (
