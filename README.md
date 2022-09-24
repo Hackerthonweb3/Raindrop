@@ -2,9 +2,6 @@
 
 ---
 
-[![GitHub deployments](https://img.shields.io/github/deployments/Hackerthonweb3/Web3_Patreon/production?label=deployment&logo=vercel&style=flat-square&color=00a550&logoColor=00a550)](https://w3p.vercel.app)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Hackerthonweb3/Web3_Patreon/Build%20Pipeline?logo=github&style=flat-square&color=00a550&logoColor=00a550)](https://github.com/Hackerthonweb3/Web3_Patreon/actions/workflows/pipeline.yml)
-
 Try out the demo, which [is hosted live here!](https://raindrop-gold.vercel.app/)
 
 ## 🚀 **Statement**
@@ -127,8 +124,7 @@ How creative and unique:
 
 ### What We Learned
 
--   
--   
+-   Communication methods for full remote and long term hackathon development.
 
 ### Team Members：
 
