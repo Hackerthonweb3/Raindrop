@@ -74,6 +74,15 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 -   **Sismo**：To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
 -   **Worldcoin**：To prove that creators and fans is real human.
 
+### Technical Demo Detail
+
+-   **EPNS**：It is used as a notification function for creator content’s update for fans.
+
+<img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105307_One+UI+Home.jpg" alt="EPNS working!">
+<img src="[https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105307_One+UI+Home.jpg" alt="EPNS working!](https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105848_EPNS+Staging.jpg)">
+
+
+
 
 ## ✨ **Potential Impact**
 
@@ -119,12 +128,12 @@ How creative and unique:
 
 ### Team Members：
 
--   Hidetaka Ko | Product Manager | We have been developing and operating Japan’s largest homestay matching service for 4 years as CEO/Co-Founder.
+-   Hidetaka Ko | Product Manager, UI/UX | We have been developing and operating Japan’s largest homestay matching service for 4 years as CEO/Co-Founder.
 -   0xYee | Full Stack Software Engineer | Working with a DAO the past 2 months.
 
 
 ### Resourses
 
 -   [Polygonscan](https://polygonscan.com/address/0xE20f77345b037b4AaFacE1C0A541E7F2Eeee9986#code)
--   [optimistic.etherscan](https://optimistic.etherscan.io/address/0x38D1672F444cb2ecf579C6aeE4F594d8d523e4d6#code)
+-   [Optimistic.etherscan](https://optimistic.etherscan.io/address/0x38D1672F444cb2ecf579C6aeE4F594d8d523e4d6#code)
 -   [Twitter](https://twitter.com/raindropcreator)
