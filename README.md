@@ -1,4 +1,4 @@
-# 🤝 **Raindrop**
+# 🌈 **Raindrop : EthOnline 2022**
 
 ---
 
