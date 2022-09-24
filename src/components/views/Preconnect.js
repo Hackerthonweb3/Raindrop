@@ -43,19 +43,21 @@ const Preconnect = () => {
                         }
                         <Text fontSize='xl' fontWeight='semibold' ml='10px'>Connect Wallet</Text>
                     </Flex>
-                    <Flex alignItems='center' mb='20px'>
-                        {isConnected &&
-                            gettingUser ?
-                            <CheckIcon color='green' boxSize={5} />
-                            :
-                            ((SUPPORTED_CHAINS.includes(chain.id) && (orbisChain ? orbisChain == chain.id : true)) ?
+                    {orbisChain &&
+                        <Flex alignItems='center' mb='20px'>
+                            {isConnected &&
+                                gettingUser ?
                                 <CheckIcon color='green' boxSize={5} />
                                 :
-                                <Spinner color="brand.500" />
-                            )
-                        }
-                        <Text fontSize='xl' fontWeight='semibold' ml='10px'>Select proper chain{orbisChain && `(the one in which you created your account ({CHAIN_NAMES[orbisChain]}))`}</Text>
-                    </Flex>
+                                ((SUPPORTED_CHAINS.includes(chain.id) && orbisChain == chain.id) ?
+                                    <CheckIcon color='green' boxSize={5} />
+                                    :
+                                    <Spinner color="brand.500" />
+                                )
+                            }
+                            <Text fontSize='xl' fontWeight='semibold' ml='10px'>Select proper chain (the one in which you created your account: {CHAIN_NAMES[orbisChain]})</Text>
+                        </Flex>
+                    }
                     <Flex alignItems='center' mb='20px'>
                         {isConnected &&
                             gettingUser ?
