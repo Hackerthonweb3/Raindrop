@@ -16,7 +16,7 @@ import PostPreview from "../layout/PostPreview";
 import formatAddress from "../../utils/formatAddress";
 import Minting from "../layout/Minting";
 import { AddIcon } from "@chakra-ui/icons";
-import { getNotifications, sendNotification, turnOnNotifications } from "../../utils/epns";
+//import { getNotifications, sendNotification, turnOnNotifications } from "../../utils/epns";
 
 const Profile = () => {
 
@@ -133,7 +133,7 @@ const Profile = () => {
             pessimistic: true
         }
 
-        //TODO change localhost
+        //TODO change to domain
         const uri = 'https://app.unlock-protocol.com/checkout?redirectUri=' + 'https://raindrop-gold.vercel.app/' + location.pathname + '&paywallConfig=' + encodeURIComponent(JSON.stringify(paywallConfig));
         window.location.href = uri;
     }
@@ -159,7 +159,7 @@ const Profile = () => {
             setUser(myUser);
         }
     }, [usingAddress, myUser])
-
+/*
     const testEPNS = () => {
         sendNotification('TITLEasdfasdfasdf', 'asdfasdfasBODY test',
             [
@@ -176,7 +176,7 @@ const Profile = () => {
     const testOptIn = () => {
         turnOnNotifications(myAddress, signer);
     }
-
+*/
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
             <Flex //Cover Image
@@ -188,7 +188,7 @@ const Profile = () => {
                 borderColor='brand.400'
                 alignItems='center'
                 justifyContent='center'
-                backgroundImage={user && user.details.profile && 'url(https://' + user.details.profile.cover + '.ipfs.w3s.link)'} //TODO add default cover if no cover
+                backgroundImage={user && user.details.profile && 'url(https://' + user.details.profile.cover + '.ipfs.w3s.link)'}
                 backgroundSize='cover'
                 backgroundPosition='center'
                 backgroundColor={(user && user.details.profile && user.details.profile.cover) ? 'white' : '#C0C0C0'}
@@ -312,9 +312,11 @@ const Profile = () => {
 
             </Flex>
 
+            {/*
             <Button onClick={testEPNS}>TEST EPNS</Button>
             <Button onClick={testGetNotif}>TEST Notif</Button>
             <Button onClick={testOptIn}>TEST OPT IN</Button>
+            */}
 
             {minting && <Minting />}
 

@@ -25,7 +25,6 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
     }
 
     const decryptBody = async () => {
-        //if (post.content.title == 'Trying fans only post') { return } //TESTING, TODO DELETE for Production
         console.log('ismember', isMember);
         if (isMember != undefined && !isMember) { return }
 

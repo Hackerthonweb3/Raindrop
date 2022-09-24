@@ -1,7 +1,7 @@
 import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Image, Checkbox, Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
-import { unlockAddress, time, CURRENCIES, raindropGroup, CHAIN_NAMES, EXPLORERS } from '../../utils/constants';
+import { unlockAddress, time, CURRENCIES, raindropGroup, CHAIN_NAMES, EXPLORERS, DECIMALS } from '../../utils/constants';
 import { useOrbis } from "../../utils/context/orbis";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
 import { FileUploader } from "react-drag-drop-files";
@@ -223,7 +223,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     <FormLabel fontWeight='semibold'>Monthly price</FormLabel>
                     <Input
                         variant='filled'
-                        placeholder={lock ? ethers.utils.formatEther(lock.price) + ' USDC' : "5.00 USDC"} //TODO update to show actual price if membership exists
+                        placeholder={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) + ' USDC' : "5.00 USDC"}
                         value={price}
                         onChange={e => setPrice(e.target.value)}
                         type='number'

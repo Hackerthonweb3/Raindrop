@@ -10,6 +10,7 @@ import { ethers, utils } from "ethers";
 import Blockies from 'react-blockies';
 import { getUploadURL, uploadFile } from "../../utils/livepeer";
 import { sendNotification } from "../../utils/epns";
+import { UploadIcon } from "../Icons";
 
 const notify = async (username, title, lock, img) => {
 
@@ -113,7 +114,8 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         }
 
         console.log('Orbis response', res);
-        notify(user?.username || address, title, lock, file && file.type != 'video/mp4' ? 'https://' + cid + '.ipfs.w3s.link' : null)
+        //notify(user?.username || address, title, lock, file && file.type != 'video/mp4' ? 'https://' + cid + '.ipfs.w3s.link' : null)
+        notify(user?.username || address, title, lock, user && user.details.profile && user.details.profile.pfp ? 'https://' + user.details.profile.pfp + '.ipfs.w3s.link' : null)
 
         setPublishing(false);
         setActive(false);
@@ -196,7 +198,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                         display={active ? 'flex' : 'none'}
                         border='1px dashed #D5D5D5'
                     >
-                        {/*TODO add icon */}
+                        <UploadIcon color='black' boxSize={6} mb='4px' />
                         <Button px='30px' size='xs' colorScheme='brandLight' color='brand.500'>{file ? file.name : 'Drop or select file'}</Button>
                         <Text fontSize='xs' color='#848484'>Any JPG, PNG, MP4, GIF</Text>
                     </Flex>
@@ -211,7 +213,6 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                         <Tooltip label='Go to My Profile to set up your membership' isDisabled={lock != undefined} hasArrow={true} shouldWrapChildren mt='2'>
                             <Radio ml='10px' value='fans' isDisabled={lock == undefined}>Fans only</Radio>
                         </Tooltip>
-                        {/*TODO disable Fans only if not creator with tooltip to CTA to become one */}
                     </RadioGroup>
                 </Flex>
                 <Flex mt='20px' alignSelf='flex-end'>

@@ -9,7 +9,6 @@ export const useLock = (address) => {
     const getLock = async () => {
         console.log('Getting locks from subgraph...');
 
-        //TODO loop for all supported chains to be able to be multichain
         for (const chain of SUPPORTED_CHAINS) {
             const subgraphData = await fetch(subgraphURLs[chain], {
                 method: 'POST',
