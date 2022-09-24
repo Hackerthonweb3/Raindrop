@@ -93,7 +93,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
         setLoading(true);
 
         if (price != '' && price > 0) {
-            if (!lock) { //Create Lock
+            if (!lock) { //Create Lock //TODO require username to create Lock ??
                 console.log('Deploying');
                 const walletService = new WalletService(unlockAddress);
 
@@ -105,7 +105,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                 try {
                     createdLockAddress = await walletService.createLock({
                         publicLockVersion: 11, //TODO check if needed
-                        name: user.username + " Raindrop", //Adding raindrop to be able to use it in subgraph (user could have other locks for other stuff)
+                        name: (user.username || address) + " Raindrop", //Adding raindrop to be able to use it in subgraph (user could have other locks for other stuff)
                         maxNumberOfKeys: ethers.constants.MaxUint256.toString(),
                         expirationDuration: time,
                         keyPrice: price.toString(), //walletService already transforms to wei
