@@ -76,7 +76,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 
 ### Technical Demo Detail
 
--   **EPNS**：It is used as a notification function for creator content’s update for fans.
+-   **EPNS**：It is used as a notification function for creator content’s update for fans. [Source code is here!](https://github.com/Hackerthonweb3/Raindrop/commit/02f1b7f669fccc634b45c7a9f2c0197780e326f9)
 
 <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105307_One+UI+Home.jpg" alt="EPNS working!">
 <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105848_EPNS+Staging.jpg" alt="EPNS working!">
