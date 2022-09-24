@@ -54,33 +54,37 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 
 #### Data Portability
 
--   **Ceramic**：We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with NextJS to easily onboard every kind of use in any platform.
--   **IPFS/Filecoin**：To allow creators to do closed content with images on the decentralized networks. Also, to allow uploading of profile images on it.
--   **Livepeer**：To allow creators to do closed content with movies on the decentralized networks.  
+-   **Ceramic**： We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with NextJS to easily onboard every kind of use in any platform.
+-   **IPFS/Filecoin**： To allow creators to do closed content with images on the decentralized networks. Also, to allow uploading of profile images on it.
+-   **Livepeer**： To allow creators to do closed content with movies on the decentralized networks.  
 
 #### Membership community made easy
 
--   **Unlock**：Subscription framework, using NFT as a proof of subscription to unlock exclusive creator streams.
+-   **Unlock**： Subscription framework, using NFT as a proof of subscription to unlock exclusive creator streams.
 -   **Polygon**：To deploy SBTs to the blockchain for low gas prices to prove that a user has met a person because of low transaction cost and privacy by using ZK.
--   **Optimism**：For creators to deploy membership NFT because of scalability.
--   **The Graph**:To track Unlock smart contract deployments and NFTs (keys) owners to use quickly on the frontend. This makes Raindrop a multi-chain application and the subgraph really helps us to do that with good UI/UX experience for not only users, but also developers in our team.
--   **EPNS**：It is used as a notification function for creator content’s update for fans.
--   **Tellor**：Allowing creator to conduct giveaways for their subscriber. 
+-   **Optimism**： For creators to deploy membership NFT because of scalability.
+-   **The Graph**: To track Unlock smart contract deployments and NFTs (keys) owners to use quickly on the frontend. This makes Raindrop a multi-chain application and the subgraph really helps us to do that with good UI/UX experience for not only users, but also developers in our team.
+-   **EPNS**： It is used as a notification function for creator content’s update for fans.
+-   **Tellor**： Allowing creator to conduct giveaways for their subscriber. 
 
 
 #### Real time and transparent data visualization
 
--   **ENS**：It is used as one of the creator's profile information to increase their credibility.
--   **Sismo**：To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
--   **Worldcoin**：To prove that creators and fans is real human.
+-   **ENS**： It is used as one of the creator's profile information to increase their credibility.
+-   **Sismo**： To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
+-   **Worldcoin**： To prove that creators and fans is real human.
 
 ### Technical Demo Detail
 
--   **EPNS**：It is used as a notification function for creator content’s update for fans. [Source code is here!](https://github.com/Hackerthonweb3/Raindrop/commit/02f1b7f669fccc634b45c7a9f2c0197780e326f9)
+-   **Notification by EPNS**：It is used as a notification function for creator content’s update for fans. [Source code is here!](https://github.com/Hackerthonweb3/Raindrop/commit/02f1b7f669fccc634b45c7a9f2c0197780e326f9)
 
 <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105307_One+UI+Home.jpg" alt="EPNS working!">
 <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105848_EPNS+Staging.jpg" alt="EPNS working!">
 
+-   **Data portability by Ceramic**：User data is portable. Migrating content and fan base to different platforms is easy.
+
+<img src="" alt="">
+<img src="" alt="">
 
 
 
