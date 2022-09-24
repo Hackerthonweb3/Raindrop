@@ -161,8 +161,8 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                 <Flex w='100%' >
                     <Flex position='absolute' left='0'>
                         {withPicture &&
-                            (user && user.pfp ?
-                                <Image maxH='50px' src={'https://' + user.pfp + '.ipfs.w3s.link'} />
+                            (user && user.details.profile?.pfp ?
+                                <Image maxW='50px' maxH='50px' src={'https://' + user.details.profile.pfp + '.ipfs.w3s.link'} />
                                 :
                                 <Blockies seed={utils.getAddress(address)} scale={4} />
                             )
