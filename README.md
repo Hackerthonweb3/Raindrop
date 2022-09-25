@@ -51,26 +51,23 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 
 #### Data Portability
 
--   **Ceramic**： We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with NextJS to easily onboard every kind of use in any platform.
--   **IPFS/Filecoin**： To allow creators to do closed content with images on the decentralized networks. Also, to allow uploading of profile images on it.
--   **Livepeer**： To allow creators to do closed content with movies on the decentralized networks.  
+-   **Ceramic**： We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with React to easily onboard every kind of use in any platform.
+-   **IPFS/Filecoin**： To allow creators to add gated content with images on the decentralized networks. Also, to allow them to upload their profile image and cover on it.
+-   **Livepeer**： To allow creators to add gated content with videos on the decentralized networks.  
 
 #### Membership community made easy
 
 -   **Unlock**： Subscription framework, using NFT as a proof of subscription to unlock exclusive creator streams.
--   **Polygon**：To deploy SBTs to the blockchain for low gas prices to prove that a user has met a person because of low transaction cost and privacy by using ZK.
--   **Optimism**： For creators to deploy membership NFT because of scalability.
--   **The Graph**: To track Unlock smart contract deployments and NFTs (keys) owners to use quickly on the frontend. This makes Raindrop a multi-chain application and the subgraph really helps us to do that with good UI/UX experience for not only users, but also developers in our team.
--   **EPNS**： It is used as a notification function for creator content’s update for fans.
--   **Tellor**： - Tellor：Allowing creator to conduct giveaways for their subscriber by using Tellor RNG to generate a random number for us which can be used to select the winner. 
+-   **Polygon**：For creators to deploy their membership NFT for little cost and scalability.
+-   **Optimism**： For creators to deploy their membership NFT for little cost and scalability.
+-   **The Graph**: To track Unlock's smart contracts deployments, and track NFTs (keys) owners of each Lock to quickly use on the frontend, instead of calling the contract directly. This makes Raindrop a multi-chain application and the subgraph really helps us to do that with good UI/UX experience for not only users, but also developers in our team.
+-   **EPNS**： It is used as a notification function for when creators create content, notify their subscribed fans.
 
 
 
 #### Real time and transparent data visualization
 
--   **Worldcoin**： To prove that creators and fans is real human.
--   **ENS**： It is used as one of the creator's profile information to increase their credibility.
--   **Sismo**： To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
+-   **Worldcoin**： To prove that creators and fans are real humans, to increase trust in them.
 
 ### Detailed Demo of the use of sponsor technology
 
