@@ -82,7 +82,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 
 <p align='center'>
     <a href='https://www.youtube.com/embed/w-9PjQ9JxjM'>
-        <img src="https://www.youtube.com/embed/w-9PjQ9JxjM">
+        <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screen+Shot+2022-09-25+at+1.24.24+AM.png">
     </a>
 </p>
 
