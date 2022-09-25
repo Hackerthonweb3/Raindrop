@@ -62,7 +62,8 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 -   **Optimism**： For creators to deploy membership NFT because of scalability.
 -   **The Graph**: To track Unlock smart contract deployments and NFTs (keys) owners to use quickly on the frontend. This makes Raindrop a multi-chain application and the subgraph really helps us to do that with good UI/UX experience for not only users, but also developers in our team.
 -   **EPNS**： It is used as a notification function for creator content’s update for fans.
--   **Tellor**： Allowing creator to conduct giveaways for their subscriber. 
+-   **Tellor**： - Tellor：Allowing creator to conduct giveaways for their subscriber by using Tellor RNG to generate a random number for us which can be used to select the winner. 
+
 
 
 #### Real time and transparent data visualization
