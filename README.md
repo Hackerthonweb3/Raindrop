@@ -78,9 +78,14 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105307_One+UI+Home.jpg" alt="EPNS working!">
 <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screenshot_20220924-105848_EPNS+Staging.jpg" alt="EPNS working!">
 
--   **Video upload function for creators by Livepeer**：To allow creators to do closed content with movies on the decentralized. [Source code is here!]()
+-   **Video upload function by Livepeer**：To allow creators to do closed content with movies on the decentralized. [Source code is here!]()
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/w-9PjQ9JxjM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p align='center'>
+    <a href='https://www.youtube.com/embed/w-9PjQ9JxjM'>
+        <img src="https://www.youtube.com/embed/w-9PjQ9JxjM">
+    </a>
+</p>
+
 
 -   **Data portability by Ceramic**：User data is portable. Migrating content and fan base to different platforms is easy.
 
