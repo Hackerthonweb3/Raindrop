@@ -15,19 +15,20 @@ import Home from './components/views/Home';
 import Explore from './components/views/Explore';
 import Sidebar from './components/layout/Sidebar'
 import CreatePost from './components/layout/CreatePost';
+import { alchemyProvider } from 'wagmi/providers/alchemy'
 //const Sidebar = lazy(() => import('./components/layout/Sidebar'));
 
 const { chains, provider } = configureChains(
   [
     chain.polygon,
     chain.optimism,
-    //...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true'
     chain.goerli,//, chain.kovan, chain.rinkeby, chain.ropsten]
-    //  : []),
     chain.polygonMumbai
   ],
   [
-    publicProvider(),
+    alchemyProvider({apiKey: 's-FtLQnuBa8xOD2WNGzq6RCKUxVVFYdT', priority: 0}), //Polygon Main
+    alchemyProvider({apiKey: 's-o9X09EYTouSzDJBTy7zXVxMm7MoRUQhu', priority: 0}), //Polygon Mumbai
+    publicProvider({priority: 1}),
   ]
 );
 

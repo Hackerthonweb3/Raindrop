@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { useAccount, useNetwork, useSigner } from "wagmi";
-import { CHAIN_NAMES, CURRENCIES, DECIMALS, raindropGroup, subgraphURLs } from "../../utils/constants";
+import { CHAIN_NAMES, DECIMALS, raindropGroup, subgraphURLs } from "../../utils/constants";
 import { useOrbis } from "../../utils/context/orbis";
 import { useLock } from "../../utils/hooks/subgraphLock";
 import CreatePost from "../layout/CreatePost";
@@ -31,6 +31,7 @@ const Profile = () => {
     const [user, setUser] = useState();
     const [isMember, setIsMember] = useState(null);
     const [minting, setMinting] = useState(false);
+    const [grantingKey, setGrantingKey] = useState(false);
     const lock = useLock(ethers.utils.getAddress(usingAddress));
 
     const location = useLocation();
@@ -293,6 +294,7 @@ const Profile = () => {
                                         cancelButton={false}
                                         border={false}
                                         setMinting={setMinting}
+                                        setGrantingKey={grantingKey}
                                     />
                                 </Flex>
 
@@ -318,9 +320,9 @@ const Profile = () => {
             <Button onClick={testOptIn}>TEST OPT IN</Button>
             */}
 
-            {minting && <Minting />}
+            {minting && <Minting grantingKey={grantingKey} />}
 
-            {searchParams.get('editing') && <EditPopup setEditing={setEditing} lock={lock} setMinting={setMinting} />}
+            {searchParams.get('editing') && <EditPopup setEditing={setEditing} lock={lock} setGrantingKey={setGrantingKey} setMinting={setMinting} />}
         </Flex >
     )
 }

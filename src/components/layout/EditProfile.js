@@ -52,14 +52,14 @@ const EditPopup = (props) => {
                 }
 
                 {tab == 1 &&
-                    <EditMembership lock={props.lock} setEditing={props.setEditing} setMinting={props.setMinting} />
+                    <EditMembership lock={props.lock} setEditing={props.setEditing} setGrantingKey={props.setGrantingKey} setMinting={props.setMinting} />
                 }
             </Flex>
         </Flex >
     )
 }
 
-export const EditMembership = ({ lock, cancelButton = true, border = true, setEditing, setMinting }) => {
+export const EditMembership = ({ lock, cancelButton = true, border = true, setEditing, setMinting, setGrantingKey }) => {
 
     const [price, setPrice] = useState('');
     const [creatorDescription, setCreatorDescription] = useState('');
@@ -111,6 +111,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                         keyPrice: price.toString(), //walletService already transforms to wei
                         currencyContractAddress: CURRENCIES[chain.id]
                     }, (err, hash) => {
+                        console.log('Minting, tx hash:', hash);
                         setEditing(false);
                         setMinting(true);
                         doToast(hash)
@@ -138,6 +139,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
                 //Mint yourself an NFT (necessary to decrypt your own posts)
                 console.log('Granting key...');
+                setGrantingKey(true);
                 try {
                     const key = await walletService.grantKey({
                         lockAddress: createdLockAddress,
@@ -159,11 +161,13 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     console.log('Error granting key', err);
                     setMinting(false);
                     setLoading(false);
+                    setGrantingKey(false);
                     return;
                 }
 
                 setLoading(false);
                 setMinting(false);
+                setGrantingKey(false);
             } else { //Update membership
                 console.log('Updating', lock.address);
 
@@ -184,25 +188,64 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
                 console.log('Connected')
 
-                await walletService.updateKeyPrice({
-                    lockAddress: lock.address,
-                    keyPrice: price.toString() //walletService already transforms to wei
-                }, (err, hash) => {
-                    doToast(hash)
+                try {
+                    await walletService.updateKeyPrice({
+                        lockAddress: lock.address,
+                        keyPrice: price.toString() //walletService already transforms to wei
+                    }, (err, hash) => {
+                        doToast(hash)
 
-                    if (err) {
-                        console.log('ERROR updating price', err);
+                        if (err) {
+                            console.log('ERROR updating price', err);
+                        }
+                    })
+
+                } catch (err) {
+                    setLoading(false);
+                    
+                    //Just for Mumbai as it has issues
+                    if (chain.id == 80001 && err.message.includes('topichash')) {
+                        toast({
+                            position: 'bottom-right',
+                            status: 'success',
+                            description: `Membership ${lock ? 'updated' : 'created'}! Please wait a few seconds and reload to reflect changes`
+                        })
+                        return;
                     }
-                })
+                    console.error('Error updating price', err);
+                    return;
+                }
+
             }
         }
 
         //Set creatorDescription
         if (creatorDescription != '') {
-            const newData = user;
-            newData.data = {
-                creatorDescription: creatorDescription
+            let newData = {};
+
+            newData.data = {};
+
+            if (user.details.profile?.pfp) {
+                newData.pfp = user.details.profile.pfp;
             }
+
+            if (user.details.profile?.cover) {
+                newData.cover = user.details.profile.cover;
+            }
+
+            if (user.username) {
+                newData.username = user.username;
+            }
+
+            if (user.details.profile?.description) {
+                newData.description = user.details.profile.description;
+            }
+
+            if(user.details.profile?.data) {
+                newData.data = user.details.profile.data;
+            }
+
+            newData.data['creatorDescription'] = creatorDescription
 
             const orbisRes = await orbis.updateProfile(newData);
 
@@ -214,7 +257,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
         toast({
             position: 'bottom-right',
             status: 'success',
-            description: 'Membership created! Please wait a few seconds and reload to reflect changes'
+            description: `Membership ${lock ? 'updated' : 'created'}! Please wait a few seconds and reload to reflect changes`
         })
         //window.location.reload()
     }
@@ -229,7 +272,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     <FormLabel fontWeight='semibold'>Monthly price</FormLabel>
                     <Input
                         variant='filled'
-                        placeholder={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) + ' USDC' : "5.00 USDC"}
+                        placeholder={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) + ' USDC' : "Monthly price"}
                         value={price}
                         onChange={e => setPrice(e.target.value)}
                         type='number'
