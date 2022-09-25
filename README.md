@@ -14,8 +14,8 @@ Try out the demo, which [is hosted live here!](https://raindrop-gold.vercel.app/
 Raindrop offers creators a decentralized alternative to platform subscriptions sites like Patreon or Onlyfans. 
 
 <p align='center'>
-    <a href='https://www.youtube.com/embed/MgAR8_WMgeE'>
-        <img src="https://www.youtube.com/watch?v=NflOaU6Kgss">
+    <a href='[https://www.youtube.com/embed/MgAR8_WMgeE](https://youtu.be/lz9BHvYONsc)'>
+        <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screen+Shot+2022-09-25+at+1.34.21+AM.png">
     </a>
 </p>
 
@@ -71,7 +71,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 -   **Sismo**： To increase trust and understand about users well by aggregating on-chain data visible while protecting user privacy information.
 -   **Worldcoin**： To prove that creators and fans is real human.
 
-### Technical Demo Detail
+### Detailed Demo of the use of sponsor technology
 
 -   **Notification by EPNS**：It is used as a notification function for creator content’s update for fans. [Source code is here!](https://github.com/Hackerthonweb3/Raindrop/commit/02f1b7f669fccc634b45c7a9f2c0197780e326f9)
 
