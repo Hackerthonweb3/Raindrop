@@ -1,4 +1,4 @@
-import { Flex, Button, Text, Image } from "@chakra-ui/react"
+import { Flex, Button, Text, Image, Tooltip, Box } from "@chakra-ui/react"
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
@@ -15,8 +15,11 @@ import Membership from "../layout/Membership";
 import PostPreview from "../layout/PostPreview";
 import formatAddress from "../../utils/formatAddress";
 import Minting from "../layout/Minting";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, CheckCircleIcon } from "@chakra-ui/icons";
+import { WorldIDWidget } from "@worldcoin/id";
 //import { getNotifications, sendNotification, turnOnNotifications } from "../../utils/epns";
+
+const ACTION_ID = "wid_staging_ff7fd326e9a407f6234ef5bf211f421a";
 
 const Profile = () => {
 
@@ -32,6 +35,8 @@ const Profile = () => {
     const [isMember, setIsMember] = useState(null);
     const [minting, setMinting] = useState(false);
     const [grantingKey, setGrantingKey] = useState(false);
+    const [verifying, setVerifying] = useState(false);
+    const [verified, setVerified] = useState(false);
     const lock = useLock(ethers.utils.getAddress(usingAddress));
 
     const location = useLocation();
@@ -139,6 +144,85 @@ const Profile = () => {
         window.location.href = uri;
     }
 
+    const checkVerification = async () => {
+        //const nullifier_hash = '0x02ac47d7de7816378581137e3af42f0fc5a40d90b2f0fc7526fc117e95cce57c'//d
+
+        const nullifier_hash = user.details.profile?.data?.nullifier_hash;
+
+        if (nullifier_hash == null) {
+            return
+        }
+
+        const res = await fetch("https://developer.worldcoin.org/api/v1/precheck/" + ACTION_ID + '?nullifier_hash=' + nullifier_hash, {
+            method: 'GET',
+        })
+
+        const d = await res.json();
+
+        if (d.nullifiers.length > 0 && d.nullifiers[0].nullifier_hash == nullifier_hash) {
+            setVerified(true);
+            console.log('Verified');
+        }
+    }
+
+    const handleVerification = async (verificationResponse) => {
+        /*const verificationResponse =
+        {
+            merkle_root: "0x0b810c1255096de2fda03f23f1fcfce006ff35d79751879cc8661067a57514a4",
+            nullifier_hash: "0x02ac47d7de7816378581137e3af42f0fc5a40d90b2f0fc7526fc117e95cce57d",
+            proof: "0x15ec355d6be179ac907cf516f197e700959c6e31bbb5b0ac7aeac643a52f5c9a2f6a7a8547476c14d13bc74af4416899435911942536229c37e0977afd53c7022fd04b7d5b331603789ca44c3e7467c6d30ff4bd5ce31d0b48e49b0030b25a0418d378a230e1fb5eff9b5117c4e9f9a0b7ca5e4f919186d893c8d3adb6c463bf0303c4f2ae3c0cf253111586de8ff67a205770e602d84b354c5511649ed395941742d28783694c6205e5b9906c26c6c323954cfc5cb7dce275d14c04f54160b12d2e97df42f200e10cf33a1e60ba1863fa57beadd5f26cc16049ce436485375a0229baacd414b0c7e7165998b2f1a50295dcb0944fcdd3ee9a87431fd230af9f"
+        }*/
+
+        const options = {
+            action_id: ACTION_ID,
+            signal: myAddress,
+            proof: verificationResponse.proof,
+            nullifier_hash: verificationResponse.nullifier_hash,
+            merkle_root: verificationResponse.merkle_root
+        };
+
+        const res = await fetch("https://developer.worldcoin.org/api/v1/verify", {
+            method: 'POST',
+            contentType: 'application/json',
+            body: JSON.stringify(options)
+        })
+
+        console.log('Response', res.data);
+
+        // const x = await res.body
+        // console.log('Worldcoin response', x.data);
+
+        //TODO add nullifier_hash to Oribs data
+        let newData = {};
+
+        newData.data = {};
+
+        if (user.details.profile?.pfp) {
+            newData.pfp = user.details.profile.pfp;
+        }
+
+        if (user.details.profile?.cover) {
+            newData.cover = user.details.profile.cover;
+        }
+
+        if (user.username) {
+            newData.username = user.username;
+        }
+
+        if (user.details.profile?.description) {
+            newData.description = user.details.profile.description;
+        }
+
+        if (user.details.profile?.data) {
+            newData.data = user.details.profile.data;
+        }
+
+        newData.data['nullifier_hash'] = res.data.nullifier_hash;
+        await orbis.updateProfile({ newData })
+        console.log('Verified!');
+        setVerified(true);
+    }
+
     useEffect(() => {
         if (user && isMember != null) {
             getPosts();
@@ -151,6 +235,12 @@ const Profile = () => {
     }, [lock, myProfile])
 
     useEffect(() => {
+        if (user) {
+            checkVerification();
+        }
+    }, [user])
+
+    useEffect(() => {
         setPosts([]);
         if (usingAddress.toLowerCase() != myAddress.toLowerCase()) {
             getUserData();
@@ -160,26 +250,24 @@ const Profile = () => {
             setUser(myUser);
         }
     }, [usingAddress, myUser])
-    /*
-        const testEPNS = () => {
-            sendNotification('TITLEasdfasdfasdf', 'asdfasdfasBODY test',
-                [
-                    'eip155:80001:0x4281aE3793A513D2e1Bf600948B0b1b837Ab37ad', //Acc2 chrome
-                    'eip155:80001:0xa02ae6323F20Ef8666B0144884543AcfeA18bCF3', //Acc3 chrome
-                    'eip155:80001:0x13a0cB5D1aA25db5a85E95f4597771c9e459fd2d' //Testing brave
-                ])
-        }
-    
-        const testGetNotif = () => {
-            getNotifications('0x4281aE3793A513D2e1Bf600948B0b1b837Ab37ad')
-        }
-    
-        const testOptIn = () => {
-            turnOnNotifications(myAddress, signer);
-        }
-    */
+
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
+            {myProfile && !verified &&
+                <Box
+                    position='fixed'
+                    right='10px'
+                    bottom='10px'
+                >
+                    <WorldIDWidget
+                        actionId={ACTION_ID}
+                        signal={myAddress}
+                        enableTelemetry
+                        onSuccess={handleVerification}
+                        onError={(error) => console.error(error)}
+                    />
+                </Box>
+            }
             <Flex //Cover Image
                 position='relative'
                 minH='250px'
@@ -235,6 +323,11 @@ const Profile = () => {
                             <Blockies seed={ethers.utils.getAddress(usingAddress)} scale={10} />
                         }
                         <Text mt='5px' fontWeight='bold' fontSize='large'>{user && (user.username || formatAddress(usingAddress))}</Text>
+                        {verified && //TODO align right of name
+                            <Tooltip label='This user has verified its humanity'>
+                                <CheckCircleIcon color='brand.500' />
+                            </Tooltip>
+                        }
                         {lock && <Text>Creator</Text>}
                         <Text w='100%' align='center' pb='20px'>{user && user.details.profile && user.details.profile.description || "No description found"}</Text>
                     </Flex>
@@ -313,12 +406,6 @@ const Profile = () => {
                 }
 
             </Flex>
-
-            {/*
-            <Button onClick={testEPNS}>TEST EPNS</Button>
-            <Button onClick={testGetNotif}>TEST Notif</Button>
-            <Button onClick={testOptIn}>TEST OPT IN</Button>
-            */}
 
             {minting && <Minting grantingKey={grantingKey} />}
 
