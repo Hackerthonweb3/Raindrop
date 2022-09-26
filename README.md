@@ -14,8 +14,8 @@ Try out the demo, which [is hosted live here!](https://raindrop-gold.vercel.app/
 Raindrop offers creators a decentralized alternative to platform subscriptions sites like Patreon or Onlyfans. 
 
 <p align='center'>
-    <a href='https://youtu.be/lz9BHvYONsc'>
-        <img src="https://youtu.be/lz9BHvYONsc">
+    <a href='https://youtu.be/bxA2sbpuMPE'>
+        <img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/Screen+Shot+2022-09-25+at+9.05.38+PM.png">
     </a>
 </p>
 
@@ -85,10 +85,10 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 </p>
 
 
--   **Data portability by Ceramic**：User data is portable. Migrating content and fan base to different platforms is easy.
+-   **Worldcoin**：To prove that creators and fans are real humans, to increase trust in them.
 
-<img src="" alt="">
-<img src="" alt="">
+<img src="https://cf-templates-abh8ozzw2ksd-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/image+(26).png" alt="Worldcoin">
+
 
 
 
@@ -144,3 +144,4 @@ How creative and unique:
 -   [Polygonscan](https://polygonscan.com/address/0xE20f77345b037b4AaFacE1C0A541E7F2Eeee9986#code)
 -   [Optimistic.etherscan](https://optimistic.etherscan.io/address/0x38D1672F444cb2ecf579C6aeE4F594d8d523e4d6#code)
 -   [Twitter](https://twitter.com/raindropcreator)
+-   [Youtube](https://www.youtube.com/watch?v=bxA2sbpuMPE)
