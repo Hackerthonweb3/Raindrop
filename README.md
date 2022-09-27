@@ -52,7 +52,7 @@ Raindrop offers creators a decentralized alternative to platform subscriptions s
 #### Data Portability
 
 -   **Ceramic**： We are mixing these on-chain solutions with off-chain portable data by using Ceramic and Lit protocols, to achieve a superior UX combined with React to easily onboard every kind of use in any platform.
--   **IPFS/Filecoin**： To allow creators to add gated content with images on the decentralized networks. Also, to allow them to upload their profile image and cover on it.
+-   **IPFS/Filecoin**： To allow creators to add gated content with images on the decentralized networks. Also, to allow them to upload their profile image and cover on it by using web3storage.
 -   **Livepeer**： To allow creators to add gated content with videos on the decentralized networks.  
 
 #### Membership community made easy
