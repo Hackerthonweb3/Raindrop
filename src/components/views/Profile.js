@@ -145,9 +145,11 @@ const Profile = () => {
     }
 
     const checkVerification = async () => {
-        //const nullifier_hash = '0x02ac47d7de7816378581137e3af42f0fc5a40d90b2f0fc7526fc117e95cce57c'//d
+        console.log('Checking verified')
 
         const nullifier_hash = user.details.profile?.data?.nullifier_hash;
+
+        console.log('Nullhash', nullifier_hash)
 
         if (nullifier_hash == null) {
             return
@@ -166,13 +168,6 @@ const Profile = () => {
     }
 
     const handleVerification = async (verificationResponse) => {
-        /*const verificationResponse =
-        {
-            merkle_root: "0x0b810c1255096de2fda03f23f1fcfce006ff35d79751879cc8661067a57514a4",
-            nullifier_hash: "0x02ac47d7de7816378581137e3af42f0fc5a40d90b2f0fc7526fc117e95cce57d",
-            proof: "0x15ec355d6be179ac907cf516f197e700959c6e31bbb5b0ac7aeac643a52f5c9a2f6a7a8547476c14d13bc74af4416899435911942536229c37e0977afd53c7022fd04b7d5b331603789ca44c3e7467c6d30ff4bd5ce31d0b48e49b0030b25a0418d378a230e1fb5eff9b5117c4e9f9a0b7ca5e4f919186d893c8d3adb6c463bf0303c4f2ae3c0cf253111586de8ff67a205770e602d84b354c5511649ed395941742d28783694c6205e5b9906c26c6c323954cfc5cb7dce275d14c04f54160b12d2e97df42f200e10cf33a1e60ba1863fa57beadd5f26cc16049ce436485375a0229baacd414b0c7e7165998b2f1a50295dcb0944fcdd3ee9a87431fd230af9f"
-        }*///"0x21db6aeede26d5e1c60d46f258c292fdf5b666de40ac31de2d024ca0776a1e4c2b717cbcc3e12c38cc5eb9815536061eaa58ec2f301157825bb4fea383d3ca0d1a392bf5a0dbe5d75482b608f76ca10d8d4f2d610ce3469a4c7371e7c22d710b03150fe54c41c0335589b426a48c9c2e62b5f95748ed8cf1575ba2136561ac8a292cad9b1e87ae577968eb6da5cc1ed2bfa80c4dbd3402a68607b513de2a2a9413bfa276d15262c8e5448d12f8d27ae8a759c4c034588738ba2fd83f5020cdb41310d738b2a3636ac9d2189ddcdbe6fe1b339342b9da68e7b207ef79f8ee46f90e1594242b026c9333af8167f30003905595a01cc19c269f5e27fb65c64a4d48"
-        
         const options = {
             action_id: ACTION_ID,
             signal: myAddress,
@@ -181,23 +176,18 @@ const Profile = () => {
             merkle_root: verificationResponse.merkle_root
         };
 
-        console.log('proof', options.proof);
-
-        console.log('Options', options);
-
         const res = await fetch("https://developer.worldcoin.org/api/v1/verify", {
             method: 'POST',
-            contentType: 'application/json',
+            headers: {
+                'content-type': 'application/json'
+            },
             body: JSON.stringify(options)
         })
 
-        console.log('Response non json', res);
-
         const x = await res.json()
-        //"This attribute is required."
         console.log('Worldcoin response', x);
 
-        //TODO add nullifier_hash to Oribs data
+        //Add nullifier_hash to Oribs data
         let newData = {};
 
         newData.data = {};
@@ -222,7 +212,7 @@ const Profile = () => {
             newData.data = user.details.profile.data;
         }
 
-        newData.data['nullifier_hash'] = x.data.nullifier_hash;
+        newData.data['nullifier_hash'] = x.nullifier_hash;
         await orbis.updateProfile({ newData })
         console.log('Verified!');
         setVerified(true);
