@@ -213,7 +213,7 @@ const Profile = () => {
         }
 
         newData.data['nullifier_hash'] = x.nullifier_hash;
-        await orbis.updateProfile({ newData })
+        await orbis.updateProfile(newData)
         console.log('Verified!');
         setVerified(true);
     }
