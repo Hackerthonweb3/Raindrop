@@ -5,10 +5,9 @@ import { Flex, ChakraProvider } from '@chakra-ui/react'
 import { publicProvider } from 'wagmi/providers/public';
 import { theme } from './utils/theme'
 import { OrbisProvider, useOrbis } from './utils/context/orbis';
-import { useEffect, lazy, useState } from 'react';
-import { BrowserRouter, Route, Routes, useRoutes } from "react-router-dom";
+import { useEffect, useState, lazy } from 'react';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LandingPage from './pages/landingPage';
-import Profile from './components/views/Profile'
 import Preconnect from './components/views/Preconnect'
 import Welcome from './components/layout/Welcome';
 import Home from './components/views/Home';
@@ -16,7 +15,8 @@ import Explore from './components/views/Explore';
 import Sidebar from './components/layout/Sidebar'
 import CreatePost from './components/layout/CreatePost';
 import { alchemyProvider } from 'wagmi/providers/alchemy'
-//const Sidebar = lazy(() => import('./components/layout/Sidebar'));
+import Profile from './components/views/Profile'
+//const Profile = lazy(() => import('./components/views/Profile'));
 
 const { chains, provider } = configureChains(
   [
@@ -26,9 +26,9 @@ const { chains, provider } = configureChains(
     chain.polygonMumbai
   ],
   [
-    alchemyProvider({apiKey: 's-FtLQnuBa8xOD2WNGzq6RCKUxVVFYdT', priority: 0}), //Polygon Main
-    alchemyProvider({apiKey: 's-o9X09EYTouSzDJBTy7zXVxMm7MoRUQhu', priority: 0}), //Polygon Mumbai
-    publicProvider({priority: 1}),
+    alchemyProvider({ apiKey: 's-FtLQnuBa8xOD2WNGzq6RCKUxVVFYdT', priority: 0 }), //Polygon Main
+    alchemyProvider({ apiKey: 's-o9X09EYTouSzDJBTy7zXVxMm7MoRUQhu', priority: 0 }), //Polygon Mumbai
+    publicProvider({ priority: 1 }),
   ]
 );
 
@@ -45,14 +45,6 @@ const wagmiClient = createClient({
 
 
 export default function App() {
-
-  /*
-  useEffect(() => {
-    window.ethereum.on('chainChanged', () => {
-      document.location.reload();
-    })
-  }, [])
-  */
 
   return (
     <WagmiConfig client={wagmiClient}>
@@ -137,7 +129,7 @@ const CreatePostPopup = ({ setCreatingPost }) => {
         minW='450px'
         w='60%'
       >
-        <CreatePost popUp setCreatingPost={setCreatingPost}/>
+        <CreatePost popUp setCreatingPost={setCreatingPost} />
       </Flex>
     </Flex>
   )

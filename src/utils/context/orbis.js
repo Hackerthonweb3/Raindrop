@@ -13,77 +13,23 @@ export const OrbisProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [gettingUser, setGettingUser] = useState(false);
     const [signing, setSigning] = useState(false);
-    const [connecting, setConnecting] = useState(true); //Defaults true to have the logging in screen by default
-    const [orbisChain, setOrbisChain] = useState(null);
+    const [connecting, setConnecting] = useState(false); //Defaults true to have the logging in screen by default
     const { address, isConnected } = useAccount();
-
-    const { chain } = useNetwork();
-
-    const createUser = async () => {
-        console.log('NEW USER');
-        setSigning(true);
-        const res = await orbis.connect(); //This creates an account for you (with null in data fields)
-        setSigning(false);
-        console.log('Orbis connect:', res);
-        getUser();
-        setWelcome(true);
-    }
 
     const getOrbis = async () => {
         setConnecting(true);
         if (!await orbis.isConnected()) {
             setConnecting(false);
 
-            //Check if chain connected is supported
-            if(!SUPPORTED_CHAINS.includes(chain.id)) {
-                console.log('Unsupported chain!')
-                return;
-            }
-
-            const { data, error } = await orbis.getDids(address);
-
-            if(error){
-                console.error(error);
-                return;
-            }
-            
-            if(data.length == 0) { //Means new user. Though not necesarilly as they could already have orbis accounts elsewhere
-                createUser();
-                return;
-            }
-            
-            //Get Orbis dids that are in supported chains
-            const validData = data.filter(x => SUPPORTED_CHAINS.includes(Number(x.did.split(':')[3])));
-
-            console.log('Data', data[0].did.split(':')[3]);
-            console.log('Valid Data', validData);
-            
-            //If not, create an Orbis user for Raindrop in supported chain
-            if(validData.length == 0){
-                createUser();
-                return;
-            }
-
-            //Take the first element in the array (Default user)
-            const _orbisChain = Number(validData[0].did.split(':')[3])
-
-            setOrbisChain(_orbisChain)
-            
-            //TODO not let them login without changing chains
-            if (_orbisChain != chain.id) {
-                console.log('REQUIRE TO CHANGE CHAINS TO ', _orbisChain);
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x' + _orbisChain.toString(16) }]
-                })
-            }
-            
             setSigning(true);
-            const res = await orbis.connect(); 
+            const res = await orbis.connect_v2({
+                lit: true,
+                provider: window.ethereum
+            });
             setSigning(false);
-            
+
             console.log('Orbis connect:', res);
-            
+
             //Error in the request
             if (res.status != 200) {
                 console.error(res);
@@ -92,12 +38,12 @@ export const OrbisProvider = ({ children }) => {
         }
         getUser();
     }
-    
+
     const getUser = async () => {
         setGettingUser(true);
         console.log('Getting user')
         const { data, error } = await orbis.getDids(address);
-        
+
         console.log('Data', data);
         //TODO
         if (error) {
@@ -123,7 +69,7 @@ export const OrbisProvider = ({ children }) => {
     }, [address])
 
     return (
-        <orbisContext.Provider value={{ orbis, user, getOrbis, welcome, setWelcome, orbisChain, gettingUser, signing, connecting }}>
+        <orbisContext.Provider value={{ orbis, user, getOrbis, welcome, setWelcome, gettingUser, signing, connecting }}>
             {children}
         </orbisContext.Provider>
     )
