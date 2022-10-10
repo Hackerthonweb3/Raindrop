@@ -92,6 +92,8 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
         setLoading(true);
 
+        let createdLockAddress;
+
         if (price != '' && price > 0) {
             if (!lock) { //Create Lock //TODO require username to create Lock ??
                 console.log('Deploying');
@@ -99,9 +101,6 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
                 await walletService.connect(provider, signer.data);
 
-                console.log('Connected')
-
-                let createdLockAddress;
                 try {
                     createdLockAddress = await walletService.createLock({
                         publicLockVersion: 11, //TODO check if needed
@@ -202,7 +201,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
                 } catch (err) {
                     setLoading(false);
-                    
+
                     //Just for Mumbai as it has issues
                     if (chain.id == 80001 && err.message.includes('topichash')) {
                         toast({
@@ -219,36 +218,28 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
             }
         }
 
-        //Set creatorDescription
+        //Update data
+        let newData = {};
+        newData = { ...user.details.profile }
+        if (user.username) {
+            newData.username = user.username;
+        }
+
+        //If new description, update
         if (creatorDescription != '') {
-            let newData = {};
-
-            newData.data = {};
-
-            if (user.details.profile?.pfp) {
-                newData.pfp = user.details.profile.pfp;
-            }
-
-            if (user.details.profile?.cover) {
-                newData.cover = user.details.profile.cover;
-            }
-
-            if (user.username) {
-                newData.username = user.username;
-            }
-
-            if (user.details.profile?.description) {
-                newData.description = user.details.profile.description;
-            }
-
-            if(user.details.profile?.data) {
-                newData.data = user.details.profile.data;
-            }
-
             newData.data['creatorDescription'] = creatorDescription
+        }
 
+        //Add the Lock address to their Orbis data
+        if (createdLockAddress) {
+            newData.data['locks'] = {
+                address: createdLockAddress,
+                chain: chain.id
+            }
+        }
+
+        if (createdLockAddress || creatorDescription != '') {
             const orbisRes = await orbis.updateProfile(newData);
-
             console.log('Updated Oribs data', orbisRes);
         }
 
@@ -259,7 +250,6 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
             status: 'success',
             description: `Membership ${lock ? 'updated' : 'created'}! Please wait a few seconds and reload to reflect changes`
         })
-        //window.location.reload()
     }
 
     return (

@@ -1,8 +1,8 @@
 import { Flex, Text, Image, Button, Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { raindropGroup } from "../../utils/constants";
-import { useOrbis } from "../../utils/context/orbis";
+import { raindropGroup } from "../utils/constants";
+import { useOrbis } from "../utils/context/orbis";
 import Blockies from 'react-blockies';
 import { utils } from "ethers";
 

@@ -3,7 +3,7 @@ import { Flex, Text, Spinner, Image } from "@chakra-ui/react"
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect } from "react";
 import { useAccount } from "wagmi";
-import { useOrbis } from "../../utils/context/orbis";
+import { useOrbis } from "../utils/context/orbis";
 
 const Preconnect = () => {
 

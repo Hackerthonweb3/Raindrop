@@ -1,7 +1,6 @@
 import { useState, useEffect, createContext, useContext } from "react"
 import { Orbis } from '@orbisclub/orbis-sdk'
-import { useAccount, useNetwork } from "wagmi";
-import { SUPPORTED_CHAINS } from "../constants";
+import { useAccount } from "wagmi";
 
 let orbis = new Orbis();
 

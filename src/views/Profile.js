@@ -3,18 +3,18 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { useAccount, useNetwork, useSigner } from "wagmi";
-import { CHAIN_NAMES, DECIMALS, raindropGroup, subgraphURLs } from "../../utils/constants";
-import { useOrbis } from "../../utils/context/orbis";
-import { useLock } from "../../utils/hooks/subgraphLock";
-import CreatePost from "../layout/CreatePost";
+import { CHAIN_NAMES, DECIMALS, raindropGroup, subgraphURLs } from "../utils/constants";
+import { useOrbis } from "../utils/context/orbis";
+import { useLock } from "../utils/hooks/subgraphLock";
+import CreatePost from "../components/layout/CreatePost";
 import Blockies from 'react-blockies';
 
 //TODO dynamic
-import EditPopup, { EditMembership } from "../layout/EditProfile";
-import Membership from "../layout/Membership";
-import PostPreview from "../layout/PostPreview";
-import formatAddress from "../../utils/formatAddress";
-import Minting from "../layout/Minting";
+import EditPopup, { EditMembership } from "../components/layout/EditProfilePopup";
+import Membership from "../components/layout/Membership";
+import PostPreview from "../components/layout/PostPreview";
+import formatAddress from "../utils/formatAddress";
+import Minting from "../components/layout/Minting";
 import { AddIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import { WorldIDWidget } from "@worldcoin/id";
 //import { getNotifications, sendNotification, turnOnNotifications } from "../../utils/epns";
