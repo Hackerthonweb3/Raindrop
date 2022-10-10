@@ -272,7 +272,7 @@ const Profile = () => {
                 borderColor='brand.400'
                 alignItems='center'
                 justifyContent='center'
-                backgroundImage={user && user.details.profile && 'url(https://' + user.details.profile.cover + '.ipfs.w3s.link)'}
+                backgroundImage={user && user.details.profile && user.details.profile.cover}
                 backgroundSize='cover'
                 backgroundPosition='center'
                 backgroundColor={(user && user.details.profile && user.details.profile.cover) ? 'white' : '#C0C0C0'}
@@ -313,7 +313,7 @@ const Profile = () => {
                     {/*Center profile*/}
                     <Flex zIndex={2} flexDirection='column' alignItems='center'>
                         {user && user.details.profile && user.details.profile.pfp ?
-                            <Image boxSize='100px' src={'https://' + user.details.profile.pfp + '.ipfs.w3s.link'} />
+                            <Image boxSize='100px' src={user.details.profile.pfp} />
                             :
                             <Blockies seed={ethers.utils.getAddress(usingAddress)} scale={10} />
                         }

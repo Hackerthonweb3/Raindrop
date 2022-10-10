@@ -60,7 +60,7 @@ const Sidebar = ({ setCreatingPost }) => {
     const handleToggleNotifications = async (e) => {
         setNotifications(!notifications); //For better UX
 
-        if(chain.id != 80001) { //If not Mumbai, where EPNS test is
+        if (chain.id != 80001) { //If not Mumbai, where EPNS test is
             alert('Please change to Mumbai where EPNS is located')
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
@@ -151,7 +151,7 @@ const Sidebar = ({ setCreatingPost }) => {
             {address && user &&
                 <Flex w='100%' p='10px' alignItems='center' cursor='pointer' onClick={() => navigate('/app/profile/' + address)}>
                     {user && user.details.profile && user.details.profile.pfp ?
-                        <Image src={'https://' + user.details.profile.pfp + '.ipfs.w3s.link'} maxH='50px' max='70px' />
+                        <Image src={user.details.profile.pfp} maxH='50px' max='70px' />
                         :
                         <Blockies seed={utils.getAddress(address)} scale={4} />
                     }

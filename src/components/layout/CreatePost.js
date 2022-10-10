@@ -87,7 +87,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     setLoadingText('Uploading Image');
                     cid = await client.put([file], { wrapWithDirectory: false })
                     postData.data = {
-                        cover: cid
+                        cover: 'https://' + cid + '.ipfs.w3s.link'
                     }
                     console.log('Picture uploaded');
                 } catch (err) {
@@ -114,8 +114,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         }
 
         console.log('Orbis response', res);
-        //notify(user?.username || address, title, lock, file && file.type != 'video/mp4' ? 'https://' + cid + '.ipfs.w3s.link' : null)
-        notify(user?.username || address, title, lock, user && user.details.profile && user.details.profile.pfp ? 'https://' + user.details.profile.pfp + '.ipfs.w3s.link' : null)
+        notify(user?.username || address, title, lock, user && user.details.profile && user.details.profile.pfp ? user.details.profile.pfp : null)
 
         setPublishing(false);
         setActive(false);
@@ -162,7 +161,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     <Flex position='absolute' left='0'>
                         {withPicture &&
                             (user && user.details.profile?.pfp ?
-                                <Image maxW='50px' maxH='50px' src={'https://' + user.details.profile.pfp + '.ipfs.w3s.link'} />
+                                <Image maxW='50px' maxH='50px' src={user.details.profile.pfp} />
                                 :
                                 <Blockies seed={utils.getAddress(address)} scale={4} />
                             )

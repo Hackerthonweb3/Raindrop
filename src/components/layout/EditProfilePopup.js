@@ -328,9 +328,11 @@ const EditProfile = (props) => {
         let newData = {}
 
         if (profilePicture) {
-            newData.pfp = await client.put([profilePicture], {
+            const pfpCid = await client.put([profilePicture], {
                 wrapWithDirectory: false
             });
+
+            newData.pfp = 'https://' + pfpCid + '.ipfs.w3s.link';
 
             console.log('Stored file with cid:', newData.pfp);
         } else if (user.details.profile?.pfp) {
@@ -338,9 +340,11 @@ const EditProfile = (props) => {
         }
 
         if (cover) {
-            newData.cover = await client.put([cover], {
+            const coverCid = await client.put([cover], {
                 wrapWithDirectory: false
             });
+
+            newData.cover = 'https://' + coverCid + '.ipfs.w3s.link';
 
             console.log('Stored file with cid:', newData.cover);
         } else if (user.details.profile?.cover) {

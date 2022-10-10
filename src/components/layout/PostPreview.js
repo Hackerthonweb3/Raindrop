@@ -64,7 +64,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
             <Flex alignItems='center' justifyContent='space-between' w='100%' px='20px' py='15px'>
                 <Flex alignItems='center' cursor='pointer' onClick={handleProfileClick}>
                     {post.creator_details?.profile?.pfp ?
-                        <Image maxH='50px' src={'https://' + post.creator_details.profile.pfp + '.ipfs.w3s.link'} />
+                        <Image maxH='50px' src={post.creator_details.profile.pfp} />
                         :
                         <Blockies seed={utils.getAddress(post.creator_details?.metadata?.address)} scale={4} />
                     }
@@ -84,7 +84,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                 >
                     {post.content.data.cover &&
                         <Image
-                            src={'https://' + post.content.data.cover + '.ipfs.w3s.link'}
+                            src={post.content.data.cover}
                             filter={post.content.encryptedBody && !unencrypted && 'blur(5px) brightness(60%)'}
                             w='100%'
                             maxH='400px'
