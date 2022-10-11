@@ -2,7 +2,7 @@ import { Flex, Button, Text, Image, Tooltip, Box } from "@chakra-ui/react"
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
-import { useAccount, useNetwork, useSigner } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { CHAIN_NAMES, DECIMALS, raindropGroup, subgraphURLs } from "../utils/constants";
 import { useOrbis } from "../utils/context/orbis";
 import { useLock } from "../utils/hooks/subgraphLock";
@@ -35,13 +35,10 @@ const Profile = () => {
     const [isMember, setIsMember] = useState(null);
     const [minting, setMinting] = useState(false);
     const [grantingKey, setGrantingKey] = useState(false);
-    const [verifying, setVerifying] = useState(false);
     const [verified, setVerified] = useState(false);
     const lock = useLock(ethers.utils.getAddress(usingAddress));
 
     const location = useLocation();
-
-    const signer = useSigner();
 
     //TODO add ENS compatibility
     const { user: myUser, orbis } = useOrbis()
