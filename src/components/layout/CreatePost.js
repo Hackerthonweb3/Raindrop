@@ -84,7 +84,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     }
                 }
             } else { //Upload image to IPFS
-                try {
+                try { //TODO encrypt with Lit
                     setLoadingText('Uploading Image');
                     cid = await client.put([file], { wrapWithDirectory: false })
                     postData.data = {
@@ -103,6 +103,13 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
 
         let res;
         if (postVisibility == 'fans') { //Gated post
+            //Get preview
+            const preview = text.substring(0, text.length > 50 ? 30 : Math.floor(text.length * 0.6))
+
+            postData.data = { preview }
+
+            console.log('Post preview', preview);
+
             res = await orbis.createPost(postData, {
                 type: 'token-gated',
                 chain: CHAIN_NAMES[lock.chain].toLowerCase(),
@@ -128,6 +135,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         setText('');
         setFile(null);
         setTitle('');
+        setPublishing(false);
     }
 
     const handleFile = (_file) => {
@@ -142,7 +150,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
     }
 
     useEffect(() => {
-        if(lock){ //To default fans if there's a lock
+        if (lock) { //To default fans if there's a lock
             setPostVisibility('fans')
         }
     }, [lock])

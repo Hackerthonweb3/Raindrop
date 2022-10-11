@@ -128,7 +128,14 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                 w='60%'
                 align='center'
                 mt='10px'
-            >{post.content.encryptedBody ? (unencrypted || (decrypting ? 'Decrypting...'/*TODO fix with nonmembers*/ : "Locked")) : post.content.body}</Text>
+            >{post.content.encryptedBody
+                ? (unencrypted || (decrypting ? 'Decrypting...'/*TODO fix with nonmembers*/ : post.content.data?.preview ? post.content.data.preview + '...' : "Locked"))
+                : post.content.body}
+            </Text>
+
+            {post.content.encryptedBody && !unencrypted && !decrypting &&
+                <Text color='#6A6A6A' align='center'>Subscribe to see full post</Text>
+            }
 
             <Flex mt='20px' alignItems='center' justifyContent='space-between' w='40%'>
                 <Flex alignItems='center' cursor='pointer' onClick={handleLike}>
