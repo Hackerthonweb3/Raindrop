@@ -1,5 +1,5 @@
 import { Flex, Input, Textarea, Text, RadioGroup, Radio, Spacer, Button, Image, Tooltip } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useOrbis } from "../../utils/context/orbis";
 import { FileUploader } from "react-drag-drop-files";
@@ -13,6 +13,7 @@ import { sendNotification } from "../../utils/epns";
 import { UploadIcon } from "../Icons";
 
 const notify = async (username, title, lock, img) => {
+    return; //TODO fix
 
     //Get subscribers
     const res = await fetch(subgraphURLs[lock.chain], {
@@ -54,7 +55,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
     const { address } = useAccount();
     const { orbis, user } = useOrbis();
     const client = useWeb3Storage();
-    const lock = useLock(address);
+    const lock = useLock(user?.details?.profile?.data?.lock || null);
 
     const handlePublish = async () => {
         if (text == '' || title == '') {
@@ -139,6 +140,12 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         await uploadFile(url, file);
         return (asset);
     }
+
+    useEffect(() => {
+        if(lock){ //To default fans if there's a lock
+            setPostVisibility('fans')
+        }
+    }, [lock])
 
     return (
         <Flex

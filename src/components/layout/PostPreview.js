@@ -25,7 +25,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
     }
 
     const decryptBody = async () => {
-        console.log('ismember', isMember);
+        console.log('isMember', isMember)
         if (isMember != undefined && !isMember) { return }
 
         setDecrypting(true);

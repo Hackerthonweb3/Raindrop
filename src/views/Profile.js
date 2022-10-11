@@ -2,7 +2,7 @@ import { Flex, Button, Text, Image, Tooltip, Box } from "@chakra-ui/react"
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useContractRead, useNetwork } from "wagmi";
 import { CHAIN_NAMES, DECIMALS, raindropGroup, subgraphURLs } from "../utils/constants";
 import { useOrbis } from "../utils/context/orbis";
 import { useLock } from "../utils/hooks/subgraphLock";
@@ -16,10 +16,13 @@ import PostPreview from "../components/layout/PostPreview";
 import formatAddress from "../utils/formatAddress";
 import Minting from "../components/layout/Minting";
 import { AddIcon, CheckCircleIcon } from "@chakra-ui/icons";
-import { WorldIDWidget } from "@worldcoin/id";
+import { updateOrbisData } from "../utils/updateOrbisData";
+// import { WorldIDWidget } from "@worldcoin/id";
 //import { getNotifications, sendNotification, turnOnNotifications } from "../../utils/epns";
 
 const ACTION_ID = "wid_staging_ff7fd326e9a407f6234ef5bf211f421a";
+
+const abi = new ethers.utils.Interface(['function balanceOf(address _owner) view returns (uint)']);
 
 const Profile = () => {
 
@@ -32,11 +35,21 @@ const Profile = () => {
     const [tab, setTab] = useState(0);
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState();
-    const [isMember, setIsMember] = useState(null);
     const [minting, setMinting] = useState(false);
     const [grantingKey, setGrantingKey] = useState(false);
     const [verified, setVerified] = useState(false);
-    const lock = useLock(ethers.utils.getAddress(usingAddress));
+    const lock = useLock(user?.details?.profile?.data?.lock || null);
+
+    const { data: balance } = useContractRead({
+        addressOrName: lock?.address,
+        contractInterface: abi,
+        functionName: 'balanceOf',
+        args: usingAddress,
+        chainId: lock?.chain
+    })
+
+    console.log('User', user);
+    console.log('Lock', lock, user?.details?.profile?.data?.lock);
 
     const location = useLocation();
 
@@ -73,7 +86,6 @@ const Profile = () => {
     }
 
     const getPosts = async () => {
-        console.log('Getting User posts:', user, isMember);
         if (!user) { return }
         const { data, error } = await orbis.getPosts({
             did: user.did,
@@ -81,38 +93,6 @@ const Profile = () => {
         })
 
         setPosts(data);
-    }
-
-    const checkMembership = async () => {
-        if (myProfile) {
-            setIsMember(true);
-            return;
-        }
-        if (!lock) {
-            setIsMember(false);
-            return
-        }
-        console.log('Getting Membership from subgraph...')//, lock, myAddress);
-        const subgraphData = await fetch(subgraphURLs[lock.chain], {
-            method: 'POST',
-            contentType: 'application/json',
-            body: JSON.stringify(
-                {
-                    query: `{
-                        locks(where: {address: "${lock.address}"}) {
-                            keys(where:{owner: "${myAddress.toLowerCase()}"}) {
-                              keyId
-                            }
-                          }
-                    }`
-                }
-            )
-        })
-
-        const res = (await subgraphData.json()).data
-        console.log('Membership', res.locks[0].keys.length > 0)
-        setIsMember(res.locks[0].keys.length > 0);
-        //setLock((await subgraphData.json()).data.locks[0])
     }
 
     const handleSubscribe = async () => {
@@ -184,51 +164,18 @@ const Profile = () => {
         const x = await res.json()
         console.log('Worldcoin response', x);
 
-        //Add nullifier_hash to Oribs data
-        let newData = {};
+        updateOrbisData({
+            nullifier_hash: x.nullifier_hash
+        }, user, orbis)
 
-        newData.data = {};
-
-        if (user.details.profile?.pfp) {
-            newData.pfp = user.details.profile.pfp;
-        }
-
-        if (user.details.profile?.cover) {
-            newData.cover = user.details.profile.cover;
-        }
-
-        if (user.username) {
-            newData.username = user.username;
-        }
-
-        if (user.details.profile?.description) {
-            newData.description = user.details.profile.description;
-        }
-
-        if (user.details.profile?.data) {
-            newData.data = user.details.profile.data;
-        }
-
-        newData.data['nullifier_hash'] = x.nullifier_hash;
-        await orbis.updateProfile(newData)
         console.log('Verified!');
         setVerified(true);
     }
 
     useEffect(() => {
-        if (user && isMember != null) {
-            getPosts();
-        }
-    }, [isMember, user])
-
-    useEffect(() => {
-        checkMembership()
-        console.log('Lock', lock);
-    }, [lock, myProfile])
-
-    useEffect(() => {
         if (user) {
             checkVerification();
+            getPosts();
         }
     }, [user])
 
@@ -245,7 +192,7 @@ const Profile = () => {
 
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
-            {myProfile && !verified &&
+            {/*myProfile && !verified &&
                 <Box
                     position='fixed'
                     right='10px'
@@ -259,7 +206,7 @@ const Profile = () => {
                         onError={(error) => console.error(error)}
                     />
                 </Box>
-            }
+            */}
             <Flex //Cover Image
                 position='relative'
                 minH='250px'
@@ -285,10 +232,10 @@ const Profile = () => {
 
 
             <Flex
-                w='55%'
+                w='60%'
+                minW='450px'
                 alignItems='center'
                 flexDirection='column'
-                //h='70%'
                 border='1px solid'
                 borderColor='brand.500'
                 position='relative'
@@ -330,7 +277,7 @@ const Profile = () => {
                             <Text mt='5px' color='#ADADAD'>Earned USDC</Text>
                         </Flex>
                         :
-                        lock && !isMember &&
+                        lock && (balance?.gt(0)) &&
                         <Flex mt='15px' flexDirection='column' alignItems='center' position='absolute' right='30px'>
                             <Button colorScheme='brand' borderRadius='70px' onClick={handleSubscribe}>Subscribe</Button>
                             <Text mt='2px' fontSize='x-small' color='#ADADAD'>On {CHAIN_NAMES[lock.chain]}</Text>
@@ -354,7 +301,7 @@ const Profile = () => {
                     <div style={{ width: '100%' }}>
                         {myProfile && <CreatePost lock={lock} getPosts={getPosts} />}
 
-                        {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} isMember={isMember} handleSubscribe={handleSubscribe} price={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) : null} />)}
+                        {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} isMember={balance?.gt(0)} handleSubscribe={handleSubscribe} price={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) : null} />)}
                     </div>
                 }
 
@@ -379,7 +326,7 @@ const Profile = () => {
                                         cancelButton={false}
                                         border={false}
                                         setMinting={setMinting}
-                                        setGrantingKey={grantingKey}
+                                        setGrantingKey={setGrantingKey}
                                     />
                                 </Flex>
 
@@ -390,7 +337,7 @@ const Profile = () => {
                             username={user && user.username}
                             lock={lock || null}
                             creatorDescription={user && user.details?.profile?.data?.creatorDescription}
-                            member={isMember}
+                            member={balance?.gt(0)}
                             exclusivePostCount={posts.filter(p => p.content.encryptedBody).length}
                             handleSubscribe={handleSubscribe}
                         />

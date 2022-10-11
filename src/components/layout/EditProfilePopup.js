@@ -6,6 +6,7 @@ import { useOrbis } from "../../utils/context/orbis";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
 import FileUploader from "./FileUploader";
 import { ethers } from "ethers";
+import { updateOrbisData } from "../../utils/updateOrbisData";
 const { WalletService } = require("@unlock-protocol/unlock-js");
 
 const EditPopup = (props) => {
@@ -107,7 +108,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                         currencyContractAddress: CURRENCIES[chain.id]
                     }, (err, hash) => {
                         console.log('Minting, tx hash:', hash);
-                        setEditing(false);
+                        setEditing && setEditing(false);
                         setMinting(true);
                         doToast(hash)
 
@@ -153,7 +154,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     console.log('Key granted', key);
                 } catch (err) {
                     //TODO handle error
-                    console.log('Error granting key', err);
+                    console.error('Error granting key', err);
                     setMinting(false);
                     setLoading(false);
                     setGrantingKey(false);
@@ -214,30 +215,13 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
             }
         }
 
-        //Update data
-        let newData = {};
-        newData = { ...user.details.profile }
-        if (user.username) {
-            newData.username = user.username;
-        }
-
-        //If new description, update
-        if (creatorDescription != '') {
-            newData.data['creatorDescription'] = creatorDescription
-        }
-
-        //Add the Lock address to their Orbis data
-        if (createdLockAddress) {
-            newData.data['locks'] = {
+        await updateOrbisData({
+            creatorDescription,
+            lock: {
                 address: createdLockAddress,
                 chain: chain.id
             }
-        }
-
-        if (createdLockAddress || creatorDescription != '') {
-            const orbisRes = await orbis.updateProfile(newData);
-            console.log('Updated Oribs data', orbisRes);
-        }
+        }, user, orbis)
 
         setLoading(false);
         setEditing && setEditing(false); //Close popup
@@ -322,54 +306,30 @@ const EditProfile = (props) => {
     const handleSave = async () => {
         setSaving(true);
 
-        let newData = {}
-
+        let pfpCid, coverCid;
+        //Upload images
         if (profilePicture) {
-            const pfpCid = await client.put([profilePicture], {
+            pfpCid = await client.put([profilePicture], {
                 wrapWithDirectory: false
             });
 
-            newData.pfp = 'https://' + pfpCid + '.ipfs.w3s.link';
-
-            console.log('Stored file with cid:', newData.pfp);
-        } else if (user.details.profile?.pfp) {
-            newData.pfp = user.details.profile.pfp;
+            console.log('Stored file with cid:', pfpCid);
         }
 
         if (cover) {
-            const coverCid = await client.put([cover], {
+            coverCid = await client.put([cover], {
                 wrapWithDirectory: false
             });
 
-            newData.cover = 'https://' + coverCid + '.ipfs.w3s.link';
-
-            console.log('Stored file with cid:', newData.cover);
-        } else if (user.details.profile?.cover) {
-            newData.cover = user.details.profile.cover;
+            console.log('Stored file with cid:', coverCid);
         }
 
-        if (username != '') {
-            newData.username = username;
-        } else if (user.username) {
-            newData.username = user.username;
-        }
-
-        if (description != '') {
-            newData.description = description;
-        } else if (user.details.profile?.description) {
-            newData.description = user.details.profile.description;
-        }
-
-        console.log('New data', newData);
-
-        const res = await orbis.updateProfile(newData)
-
-        console.log('Orbis response', res);
-
-        if (res.status != 200) {
-            //TODO error handling
-            console.error(res);
-        }
+        await updateOrbisData({
+            pfp: pfpCid ? 'https://' + pfpCid + '.ipfs.w3s.link' : null,
+            cover: coverCid ? 'https://' + coverCid + '.ipfs.w3s.link' : null,
+            username,
+            description
+        }, user, orbis)
 
         setSaving(false);
         getOrbis(); //TODO fix to manually change username in orbis context

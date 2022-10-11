@@ -39,10 +39,10 @@ export const DECIMALS = {
 }
 
 export const subgraphURLs = {
-    5: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/goerli',
-    137: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/polygon',
-    10: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/optimism',
-    80001: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/mumbai'
+    5: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/goerli-v2',
+    137: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/polygon-v2',
+    10: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/optimism-v2',
+    80001: 'https://api.thegraph.com/subgraphs/name/unlock-protocol/mumbai-v2'
 }
 
 export const EXPLORERS = {

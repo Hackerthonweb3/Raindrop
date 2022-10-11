@@ -26,8 +26,8 @@ const { chains, provider } = configureChains(
     chain.polygonMumbai
   ],
   [
-    alchemyProvider({ apiKey: 's-FtLQnuBa8xOD2WNGzq6RCKUxVVFYdT', priority: 0 }), //Polygon Main
-    alchemyProvider({ apiKey: 's-o9X09EYTouSzDJBTy7zXVxMm7MoRUQhu', priority: 0 }), //Polygon Mumbai
+    //alchemyProvider({ apiKey: 's-FtLQnuBa8xOD2WNGzq6RCKUxVVFYdT', priority: 0 }), //Polygon Main
+    //alchemyProvider({ apiKey: 's-o9X09EYTouSzDJBTy7zXVxMm7MoRUQhu', priority: 0 }), //Polygon Mumbai
     publicProvider({ priority: 1 }),
   ]
 );

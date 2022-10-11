@@ -43,7 +43,6 @@ export const OrbisProvider = ({ children }) => {
         console.log('Getting user')
         const { data, error } = await orbis.getDids(address);
 
-        console.log('Data', data);
         //TODO
         if (error) {
             setGettingUser(false)
