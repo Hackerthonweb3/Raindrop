@@ -44,7 +44,7 @@ const Profile = () => {
         addressOrName: lock?.address,
         contractInterface: abi,
         functionName: 'balanceOf',
-        args: usingAddress,
+        args: myAddress,
         chainId: lock?.chain
     })
 

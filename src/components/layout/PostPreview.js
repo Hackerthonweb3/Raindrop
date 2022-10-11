@@ -7,6 +7,7 @@ import Blockies from 'react-blockies';
 import { utils } from "ethers";
 import { LikeIcon } from "../Icons";
 
+//isMember is received from when loading from Profile, so we skip the check
 const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 
     const [unencrypted, setUnencrypted] = useState();
@@ -152,63 +153,3 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 }
 
 export default PostPreview;
-
-/*
-        const lit = new LitJsSdk.LitNodeClient({ debug: false });
-        await lit.connect();
-
-        //const authSig = JSON.parse(localStorage.getItem("lit-auth-signature"));
-
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "goerli" });
-
-        console.log('AuthSig', authSig);
-
-        console.log('access co', JSON.parse(post.content.encryptedBody.accessControlConditions))
-
-        const test = [
-            {
-                contractAddress: "0xe86652af35cac36535eb73625363d6cbcc4f4f09",
-                standardContractType: "ERC721",
-                chain: "goerli",
-                method: "balanceOf",
-                parameters: [
-                    ":userAddress"
-                ],
-                returnValueTest: {
-                    comparator: ">=",
-                    value: "1"
-                }
-            }
-        ]
-
-        //"[{"contractAddress":"0xe86652af35cac36535eb73625363d6cbcc4f4f09","standardContractType":"ERC721","chain":"goerli","method":"balanceOf","parameters":[":userAddress"],"returnValueTest":{"comparator":">=","value":1}}]"
-        //"The access control conditions you passed in do not match the ones that were set by the condition creator for this encryptedSymmetricKey."
-
-
-        const symmetricKey = await lit.getEncryptionKey({
-            accessControlConditions: test, //JSON.parse(post.content.encryptedBody.accessControlConditions),
-            toDecrypt: post.content.encryptedBody.encryptedSymmetricKey,
-            authSig: authSig,
-            chain: 'goerli'
-        })
-
-        console.log('res', symmetricKey)
-
-        //"[{\"contractAddress\":\"0xe86652af35cac36535eb73625363d6cbcc4f4f09\",\"standardContractType\":\"ERC721\",\"chain\":\"goerli\",\"method\":\"balanceOf\",\"parameters\":[\":userAddress\"],\"returnValueTest\":{\"comparator\":\">=\",\"value\":\"1\"}}]"
-
-        //"Expecting Array type for parameter named accessControlConditions in Lit-JS-SDK function getEncryptionKey(), but received "String" type instead. value: [{"contractAddress":"0xe86652af35cac36535eb73625363d6cbcc4f4f09","standardContractType":"ERC721","chain":"goerli","method":"balanceOf","parameters":[":userAddress"],"returnValueTest":{"comparator":">=","value":1}}]"
-
-        //const { data, error } = await orbis.decryptPost(post.content);
-
-
-        "[
-            {"contractAddress":"0xe86652af35cac36535eb73625363d6cbcc4f4f09",
-            "standardContractType":"ERC721",
-            "chain":"goerli",
-            "method":"balanceOf",
-            "parameters":[":userAddress"],
-            "returnValueTest": {
-                "comparator":">=",
-                "value":1}
-            }
-        ]"*/
