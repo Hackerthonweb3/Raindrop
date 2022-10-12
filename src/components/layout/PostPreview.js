@@ -6,6 +6,7 @@ import formatAddress from "../../utils/formatAddress";
 import Blockies from 'react-blockies';
 import { utils } from "ethers";
 import { LikeIcon, LikeIconFill } from "../Icons";
+import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
 
 //isMember is received from when loading from Profile, so we skip the check
 const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
@@ -23,9 +24,9 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
     }
 
     const handleLike = async () => {
-        await orbis.react(post.stream_id, 'like')
         setLiked(true);
         post.count_likes += 1;
+        await orbis.react(post.stream_id, 'like')
     }
 
     const decryptBody = async () => {
@@ -136,7 +137,13 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
             <Flex alignItems='center' mt='10px'>
                 <Text position='absolute' left='15px' fontSize='xs' color='rgba(0, 0, 0, 0.2)'>Send tip (Coming soon)</Text>
                 <Text fontSize='xs' color='#AEAEAE'>{date?.toLocaleDateString()}</Text>
-                <Text position='absolute' right='15px' fontSize='xs' color='rgba(0, 0, 0, 0.7)'>{post.content.encryptedBody ? (unencrypted ? 'Unlocked' : 'Locked') : 'Unlocked'}</Text>
+                <Flex position='absolute' right='15px' alignItems='center'>
+                    {post.content?.encryptedBody && (unencrypted
+                        ? <UnlockIcon boxSize={2} color='rgba(0, 0, 0, 0.5)'/>
+                        : <LockIcon boxSize={2} color='rgba(0, 0, 0, 0.5)'/>
+                    )}
+                    <Text ml='3px' fontSize='xs' color='rgba(0, 0, 0, 0.7)'>{post.content.encryptedBody ? (unencrypted ? 'Unlocked' : 'Locked') : 'Public Post'}</Text>
+                </Flex>
             </Flex>
             <Text fontWeight='bold' >{post.content.title}</Text>
             <Text

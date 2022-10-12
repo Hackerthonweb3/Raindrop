@@ -65,7 +65,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
     const provider = useProvider()
     const signer = useSigner();
     const { chain } = useNetwork();
-    const { user, orbis } = useOrbis();
+    const { user, orbis, getOrbis } = useOrbis();
     const { address } = useAccount();
     const toast = useToast();
 
@@ -230,6 +230,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
             status: 'success',
             description: `Membership ${lock ? 'updated' : 'created'}! Please wait a few seconds and reload to reflect changes`
         })
+        setTimeout(() => getOrbis(), 1000); //After 1 second to update the membership page
     }
 
     return (
