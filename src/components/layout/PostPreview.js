@@ -5,15 +5,18 @@ import { useNavigate } from "react-router-dom";
 import formatAddress from "../../utils/formatAddress";
 import Blockies from 'react-blockies';
 import { utils } from "ethers";
-import { LikeIcon } from "../Icons";
+import { LikeIcon, LikeIconFill } from "../Icons";
+import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
 
+//isMember is received from when loading from Profile, so we skip the check
 const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 
     const [unencrypted, setUnencrypted] = useState();
     const [date, setDate] = useState();
     const [decrypting, setDecrypting] = useState(false);
+    const [liked, setLiked] = useState(false);
 
-    const { orbis } = useOrbis();
+    const { orbis, user } = useOrbis();
     const navigate = useNavigate();
 
     const handleProfileClick = () => {
@@ -21,11 +24,13 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
     }
 
     const handleLike = async () => {
+        setLiked(true);
+        post.count_likes += 1;
         await orbis.react(post.stream_id, 'like')
     }
 
     const decryptBody = async () => {
-        console.log('ismember', isMember);
+        console.log('isMember', isMember)
         if (isMember != undefined && !isMember) { return }
 
         setDecrypting(true);
@@ -41,6 +46,18 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
         }
         setDecrypting(false);
     }
+
+    const getReaction = async () => {
+        let { data } = await orbis.getReaction(post.stream_id, user.did);
+
+        if (data && data.type == 'like') {
+            setLiked(true);
+        }
+    }
+
+    useEffect(() => {
+        getReaction();
+    }, [])
 
     useEffect(() => {
         if (post.content.encryptedBody) { // Gated content
@@ -64,7 +81,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
             <Flex alignItems='center' justifyContent='space-between' w='100%' px='20px' py='15px'>
                 <Flex alignItems='center' cursor='pointer' onClick={handleProfileClick}>
                     {post.creator_details?.profile?.pfp ?
-                        <Image maxH='50px' src={'https://' + post.creator_details.profile.pfp + '.ipfs.w3s.link'} />
+                        <Image maxH='50px' src={post.creator_details.profile.pfp} />
                         :
                         <Blockies seed={utils.getAddress(post.creator_details?.metadata?.address)} scale={4} />
                     }
@@ -84,7 +101,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                 >
                     {post.content.data.cover &&
                         <Image
-                            src={'https://' + post.content.data.cover + '.ipfs.w3s.link'}
+                            src={post.content.data.cover}
                             filter={post.content.encryptedBody && !unencrypted && 'blur(5px) brightness(60%)'}
                             w='100%'
                             maxH='400px'
@@ -120,7 +137,13 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
             <Flex alignItems='center' mt='10px'>
                 <Text position='absolute' left='15px' fontSize='xs' color='rgba(0, 0, 0, 0.2)'>Send tip (Coming soon)</Text>
                 <Text fontSize='xs' color='#AEAEAE'>{date?.toLocaleDateString()}</Text>
-                <Text position='absolute' right='15px' fontSize='xs' color='rgba(0, 0, 0, 0.7)'>{post.content.encryptedBody ? (unencrypted ? 'Unlocked' : 'Locked') : 'Unlocked'}</Text>
+                <Flex position='absolute' right='15px' alignItems='center'>
+                    {post.content?.encryptedBody && (unencrypted
+                        ? <UnlockIcon boxSize={2} color='rgba(0, 0, 0, 0.5)'/>
+                        : <LockIcon boxSize={2} color='rgba(0, 0, 0, 0.5)'/>
+                    )}
+                    <Text ml='3px' fontSize='xs' color='rgba(0, 0, 0, 0.7)'>{post.content.encryptedBody ? (unencrypted ? 'Unlocked' : 'Locked') : 'Public Post'}</Text>
+                </Flex>
             </Flex>
             <Text fontWeight='bold' >{post.content.title}</Text>
             <Text
@@ -128,7 +151,14 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                 w='60%'
                 align='center'
                 mt='10px'
-            >{post.content.encryptedBody ? (unencrypted || (decrypting ? 'Decrypting...'/*TODO fix with nonmembers*/ : "Locked")) : post.content.body}</Text>
+            >{post.content.encryptedBody
+                ? (unencrypted || (decrypting ? 'Decrypting...'/*TODO fix with nonmembers*/ : post.content.data?.preview ? post.content.data.preview + '...' : "Locked"))
+                : post.content.body}
+            </Text>
+
+            {post.content.encryptedBody && !unencrypted && !decrypting &&
+                <Text color='#6A6A6A' align='center'>Subscribe to see full post</Text>
+            }
 
             <Flex mt='20px' alignItems='center' justifyContent='space-between' w='40%'>
                 <Flex alignItems='center' cursor='pointer' onClick={handleLike}>
@@ -136,8 +166,18 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                     <Image src='/comment.svg' ml='5px' boxSize={3} />
                 </Flex>
                 <Flex alignItems='center' cursor='pointer' onClick={handleLike}>
-                    <Text fontSize='xs' color='brand.500'>{post.count_likes} Likes</Text>
-                    <LikeIcon color='brand.500' ml='5px' boxSize={3} />
+                    {liked
+                        ?
+                        <>
+                            <Text fontSize='xs' color='brand.500'>{post.count_likes == 1 ? post.count_likes + ' Like' : post.count_likes + ' Likes'}</Text>
+                            <LikeIconFill fill='brand.500' ml='5px' boxSize={3} />
+                        </>
+                        :
+                        <>
+                            <Text fontSize='xs' color='brand.500'>{post.count_likes == 1 ? post.count_likes + ' Like' : post.count_likes + ' Likes'}</Text>
+                            <LikeIcon color='brand.500' ml='5px' boxSize={3} />
+                        </>
+                    }
                 </Flex>
             </Flex>
         </Flex>
@@ -145,63 +185,3 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 }
 
 export default PostPreview;
-
-/*
-        const lit = new LitJsSdk.LitNodeClient({ debug: false });
-        await lit.connect();
-
-        //const authSig = JSON.parse(localStorage.getItem("lit-auth-signature"));
-
-        const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "goerli" });
-
-        console.log('AuthSig', authSig);
-
-        console.log('access co', JSON.parse(post.content.encryptedBody.accessControlConditions))
-
-        const test = [
-            {
-                contractAddress: "0xe86652af35cac36535eb73625363d6cbcc4f4f09",
-                standardContractType: "ERC721",
-                chain: "goerli",
-                method: "balanceOf",
-                parameters: [
-                    ":userAddress"
-                ],
-                returnValueTest: {
-                    comparator: ">=",
-                    value: "1"
-                }
-            }
-        ]
-
-        //"[{"contractAddress":"0xe86652af35cac36535eb73625363d6cbcc4f4f09","standardContractType":"ERC721","chain":"goerli","method":"balanceOf","parameters":[":userAddress"],"returnValueTest":{"comparator":">=","value":1}}]"
-        //"The access control conditions you passed in do not match the ones that were set by the condition creator for this encryptedSymmetricKey."
-
-
-        const symmetricKey = await lit.getEncryptionKey({
-            accessControlConditions: test, //JSON.parse(post.content.encryptedBody.accessControlConditions),
-            toDecrypt: post.content.encryptedBody.encryptedSymmetricKey,
-            authSig: authSig,
-            chain: 'goerli'
-        })
-
-        console.log('res', symmetricKey)
-
-        //"[{\"contractAddress\":\"0xe86652af35cac36535eb73625363d6cbcc4f4f09\",\"standardContractType\":\"ERC721\",\"chain\":\"goerli\",\"method\":\"balanceOf\",\"parameters\":[\":userAddress\"],\"returnValueTest\":{\"comparator\":\">=\",\"value\":\"1\"}}]"
-
-        //"Expecting Array type for parameter named accessControlConditions in Lit-JS-SDK function getEncryptionKey(), but received "String" type instead. value: [{"contractAddress":"0xe86652af35cac36535eb73625363d6cbcc4f4f09","standardContractType":"ERC721","chain":"goerli","method":"balanceOf","parameters":[":userAddress"],"returnValueTest":{"comparator":">=","value":1}}]"
-
-        //const { data, error } = await orbis.decryptPost(post.content);
-
-
-        "[
-            {"contractAddress":"0xe86652af35cac36535eb73625363d6cbcc4f4f09",
-            "standardContractType":"ERC721",
-            "chain":"goerli",
-            "method":"balanceOf",
-            "parameters":[":userAddress"],
-            "returnValueTest": {
-                "comparator":">=",
-                "value":1}
-            }
-        ]"*/

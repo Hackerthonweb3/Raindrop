@@ -1,56 +1,47 @@
 import { useEffect, useState } from "react";
-import { useNetwork } from "wagmi";
-import { subgraphURLs, SUPPORTED_CHAINS } from "../constants";
+import { subgraphURLs } from "../constants";
 
-export const useLock = (address) => {
+export const useLock = (data) => {
 
     const [lock, setLock] = useState();
 
     const getLock = async () => {
-        console.log('Getting locks from subgraph...');
+        console.log('Getting locks from subgraph...', data);
 
         let got = false;
 
-        for (const chain of SUPPORTED_CHAINS) {
-            const subgraphData = await fetch(subgraphURLs[chain], {
-                method: 'POST',
-                contentType: 'application/json',
-                body: JSON.stringify(
-                    {
-                        query: `{
-                            locks(where: {owner: "${address}", name_contains: "Raindrop"}) {
-                                id
+        const subgraphData = await fetch(subgraphURLs[data.chain], {
+            method: 'POST',
+            contentType: 'application/json',
+            body: JSON.stringify(
+                {
+                    query: `{
+                            locks(where: {address: "${data.address}"}) {
                                 name
                                 address
                                 price
-                                creationBlock
-                                tokenAddress
-                                expirationDuration
-                                maxNumberOfKeys
-                                version
-                                totalSupply
+                                createdAtBlock
                             }
                         }`
-                    }
-                )
-            })
-            const l = (await subgraphData.json()).data.locks[0]
-            if (l) {
-                l.chain = chain;
-                setLock(l);
-                got = true;
-                break;
-            }
+                }
+            )
+        })
+        const l = (await subgraphData.json()).data.locks[0]
+        if (l) {
+            l.chain = data.chain;
+            setLock(l);
+            got = true;
         }
 
-        if(!got) { //To avoid changing profiles and having the same lock
+        if (!got) { //To avoid changing profiles and having the same lock
             setLock(null)
         }
     }
 
     useEffect(() => {
+        if (!data) return;
         getLock();
-    }, [address])
+    }, [data])
 
     return lock;
 }

@@ -1,8 +1,7 @@
 import { Flex, Input, Textarea, Text, RadioGroup, Radio, Spacer, Button, Image, Tooltip } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useOrbis } from "../../utils/context/orbis";
-import { FileUploader } from "react-drag-drop-files";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
 import { CHAIN_NAMES, raindropGroup, subgraphURLs } from "../../utils/constants";
 import { useLock } from "../../utils/hooks/subgraphLock";
@@ -11,8 +10,10 @@ import Blockies from 'react-blockies';
 import { getUploadURL, uploadFile } from "../../utils/livepeer";
 import { sendNotification } from "../../utils/epns";
 import { UploadIcon } from "../Icons";
+import FileUploader from "./FileUploader";
 
 const notify = async (username, title, lock, img) => {
+    return; //TODO fix
 
     //Get subscribers
     const res = await fetch(subgraphURLs[lock.chain], {
@@ -54,7 +55,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
     const { address } = useAccount();
     const { orbis, user } = useOrbis();
     const client = useWeb3Storage();
-    const lock = useLock(address);
+    const lock = useLock(user?.details?.profile?.data?.lock || null);
 
     const handlePublish = async () => {
         if (text == '' || title == '') {
@@ -68,7 +69,8 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         const postData = {
             title: title,
             body: text,
-            context: raindropGroup
+            context: raindropGroup,
+            data: {}
         }
 
         let cid; //Image IPFS
@@ -83,11 +85,11 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     }
                 }
             } else { //Upload image to IPFS
-                try {
+                try { //TODO encrypt with Lit
                     setLoadingText('Uploading Image');
                     cid = await client.put([file], { wrapWithDirectory: false })
                     postData.data = {
-                        cover: cid
+                        cover: 'https://' + cid + '.ipfs.w3s.link'
                     }
                     console.log('Picture uploaded');
                 } catch (err) {
@@ -102,6 +104,13 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
 
         let res;
         if (postVisibility == 'fans') { //Gated post
+            //Get preview
+            const preview = text.substring(0, text.length > 50 ? 30 : Math.floor(text.length * 0.6))
+
+            postData.data.preview = preview
+
+            console.log('Post preview', preview);
+
             res = await orbis.createPost(postData, {
                 type: 'token-gated',
                 chain: CHAIN_NAMES[lock.chain].toLowerCase(),
@@ -114,13 +123,15 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         }
 
         console.log('Orbis response', res);
-        //notify(user?.username || address, title, lock, file && file.type != 'video/mp4' ? 'https://' + cid + '.ipfs.w3s.link' : null)
-        notify(user?.username || address, title, lock, user && user.details.profile && user.details.profile.pfp ? 'https://' + user.details.profile.pfp + '.ipfs.w3s.link' : null)
+        notify(user?.username || address, title, lock, user && user.details.profile && user.details.profile.pfp ? user.details.profile.pfp : null)
 
         setPublishing(false);
         setActive(false);
-        emptyData()
-        getPosts && getPosts();
+        emptyData();
+
+        if(getPosts){
+            setTimeout(() => getPosts(), 1000); //Wait 1 sec to getPosts again.
+        } 
     }
 
     const emptyData = () => {
@@ -128,6 +139,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         setText('');
         setFile(null);
         setTitle('');
+        setPublishing(false);
     }
 
     const handleFile = (_file) => {
@@ -140,6 +152,12 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         await uploadFile(url, file);
         return (asset);
     }
+
+    useEffect(() => {
+        if (lock) { //To default fans if there's a lock
+            setPostVisibility('fans')
+        }
+    }, [lock])
 
     return (
         <Flex
@@ -162,7 +180,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     <Flex position='absolute' left='0'>
                         {withPicture &&
                             (user && user.details.profile?.pfp ?
-                                <Image maxW='50px' maxH='50px' src={'https://' + user.details.profile.pfp + '.ipfs.w3s.link'} />
+                                <Image maxW='50px' maxH='50px' src={user.details.profile.pfp} />
                                 :
                                 <Blockies seed={utils.getAddress(address)} scale={4} />
                             )
@@ -184,7 +202,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     size='md'
                 />
 
-                <FileUploader width='100%' handleChange={handleFile} types={["JPG", "PNG", "GIF", "MP4"]}>
+                <FileUploader setFile={handleFile} accept='images/*'>
                     <Flex
                         my='20px'
                         cursor='pointer'

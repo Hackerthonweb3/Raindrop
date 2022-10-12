@@ -1,9 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { raindropGroup } from "../../utils/constants";
-import { useOrbis } from "../../utils/context/orbis";
-import CreatePost from "../layout/CreatePost";
-import PostPreview from "../layout/PostPreview";
+import { raindropGroup } from "../utils/constants";
+import { useOrbis } from "../utils/context/orbis";
+import CreatePost from "../components/layout/CreatePost";
+import PostPreview from "../components/layout/PostPreview";
 
 const Home = () => {
 

@@ -1,8 +1,8 @@
 import { Flex, Text, Image, Button, Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { raindropGroup } from "../../utils/constants";
-import { useOrbis } from "../../utils/context/orbis";
+import { raindropGroup } from "../utils/constants";
+import { useOrbis } from "../utils/context/orbis";
 import Blockies from 'react-blockies';
 import { utils } from "ethers";
 
@@ -71,7 +71,7 @@ const ProfilePreview = ({ profile, address }) => {
             filter='drop-shadow(0px 17px 46px rgba(0, 0, 0, 0.25))'
         >
             {profile.pfp ?
-                <Image src={'https://' + profile.pfp + '.ipfs.w3s.link'} maxW='100px' maxH='100px'/>
+                <Image src={profile.pfp} maxW='100px' maxH='100px' />
                 :
                 <Blockies seed={utils.getAddress(address)} scale={10} />
             }

@@ -1,61 +1,58 @@
-import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Image, Checkbox, Box } from "@chakra-ui/react";
+import { Flex, Text, FormControl, FormLabel, Input, Button, useToast, Textarea, Image, Checkbox, Box, ModalBody, ModalContent, Modal, ModalOverlay } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 import { unlockAddress, time, CURRENCIES, raindropGroup, CHAIN_NAMES, EXPLORERS, DECIMALS } from '../../utils/constants';
 import { useOrbis } from "../../utils/context/orbis";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
-import { FileUploader } from "react-drag-drop-files";
+import FileUploader from "./FileUploader";
 import { ethers } from "ethers";
+import { updateOrbisData } from "../../utils/updateOrbisData";
 const { WalletService } = require("@unlock-protocol/unlock-js");
-
-//TODO set lazy
 
 const EditPopup = (props) => {
 
     const [tab, setTab] = useState(0);
 
     return (
-        <Flex
-            alignItems='center'
-            justifyContent='center'
-            position='fixed'
-            bottom='0px'
-            left='0px'
-            h='100vh'
-            w='100vw'
-            backdropFilter='blur(5px)'
-            backgroundColor='rgba(10,10,10,0.3)'
-            zIndex={5}
-        >
-            <Flex
-                backgroundColor='white'
-                boxShadow='0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
-                py='30px'
-                px='40px'
-                borderRadius='26px'
-                sx={{
-                    background: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(90deg, #0085AB 0%, #2CB2C3 34.2%, #F9D520 69.77%, #D1D922 102.6%) border-box',
-                    border: '3px solid transparent',
-                }}
-                flexDirection='column'
-                minW='500px'
-            >
-                <Text fontSize='3xl' fontWeight='bold'>Edit Profile</Text>
+        <Modal isOpen scrollBehavior='outside' onClose={() => props.setEditing(false)}>
+            <ModalOverlay />
+            <ModalContent background='transparent' boxShadow='none' my='20px'>
+                <Flex
+                    backgroundColor='white'
+                    boxShadow='0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
+                    py='30px'
+                    px='40px'
+                    borderRadius='26px'
+                    sx={{
+                        background: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(90deg, #0085AB 0%, #2CB2C3 34.2%, #F9D520 69.77%, #D1D922 102.6%) border-box',
+                        border: '3px solid transparent',
+                    }}
+                    flexDirection='column'
+                    minW='500px'
+                    maxW='700px'
+                    w='60vw'
+                    position='absolute'
+                    left='50%'
+                    transform='translate(-50%)'
+                >
+                    <Text fontSize='3xl' fontWeight='bold'>Edit Profile</Text>
 
-                <Flex alignItems='flex-start' mt='10px'>
-                    <Text onClick={() => setTab(0)} cursor='pointer' fontWeight='bold' mr='40px' py='3px' borderColor='brand.400' color={tab == 0 ? 'brand.400' : 'black'} borderBottom={tab == 0 ? '3px solid' : 'none'}>Profile</Text>
-                    <Text onClick={() => setTab(1)} cursor='pointer' fontWeight='bold' py='3px' borderColor='brand.400' color={tab == 1 ? 'brand.400' : 'black'} borderBottom={tab == 1 ? '3px solid' : 'none'}>Membership</Text>
+                    <Flex alignItems='flex-start' mt='10px'>
+                        <Text onClick={() => setTab(0)} cursor='pointer' fontWeight='bold' mr='40px' py='3px' borderColor='brand.400' color={tab == 0 ? 'brand.400' : 'black'} borderBottom={tab == 0 ? '3px solid' : 'none'}>Profile</Text>
+                        <Text onClick={() => setTab(1)} cursor='pointer' fontWeight='bold' py='3px' borderColor='brand.400' color={tab == 1 ? 'brand.400' : 'black'} borderBottom={tab == 1 ? '3px solid' : 'none'}>Membership</Text>
+                    </Flex>
+
+                    {tab == 0 &&
+                        <EditProfile setEditing={props.setEditing} />
+                    }
+
+                    {tab == 1 &&
+                        <EditMembership lock={props.lock} setEditing={props.setEditing} setGrantingKey={props.setGrantingKey} setMinting={props.setMinting} />
+                    }
+
                 </Flex>
-
-                {tab == 0 &&
-                    <EditProfile setEditing={props.setEditing} />
-                }
-
-                {tab == 1 &&
-                    <EditMembership lock={props.lock} setEditing={props.setEditing} setGrantingKey={props.setGrantingKey} setMinting={props.setMinting} />
-                }
-            </Flex>
-        </Flex >
+            </ModalContent>
+        </Modal>
     )
 }
 
@@ -68,7 +65,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
     const provider = useProvider()
     const signer = useSigner();
     const { chain } = useNetwork();
-    const { user, orbis } = useOrbis();
+    const { user, orbis, getOrbis } = useOrbis();
     const { address } = useAccount();
     const toast = useToast();
 
@@ -92,6 +89,8 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
         setLoading(true);
 
+        let createdLockAddress;
+
         if (price != '' && price > 0) {
             if (!lock) { //Create Lock //TODO require username to create Lock ??
                 console.log('Deploying');
@@ -99,9 +98,6 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
                 await walletService.connect(provider, signer.data);
 
-                console.log('Connected')
-
-                let createdLockAddress;
                 try {
                     createdLockAddress = await walletService.createLock({
                         publicLockVersion: 11, //TODO check if needed
@@ -112,7 +108,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                         currencyContractAddress: CURRENCIES[chain.id]
                     }, (err, hash) => {
                         console.log('Minting, tx hash:', hash);
-                        setEditing(false);
+                        setEditing && setEditing(false);
                         setMinting(true);
                         doToast(hash)
 
@@ -158,7 +154,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
                     console.log('Key granted', key);
                 } catch (err) {
                     //TODO handle error
-                    console.log('Error granting key', err);
+                    console.error('Error granting key', err);
                     setMinting(false);
                     setLoading(false);
                     setGrantingKey(false);
@@ -202,7 +198,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
 
                 } catch (err) {
                     setLoading(false);
-                    
+
                     //Just for Mumbai as it has issues
                     if (chain.id == 80001 && err.message.includes('topichash')) {
                         toast({
@@ -219,38 +215,13 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
             }
         }
 
-        //Set creatorDescription
-        if (creatorDescription != '') {
-            let newData = {};
-
-            newData.data = {};
-
-            if (user.details.profile?.pfp) {
-                newData.pfp = user.details.profile.pfp;
+        await updateOrbisData({
+            creatorDescription,
+            lock: {
+                address: createdLockAddress,
+                chain: chain.id
             }
-
-            if (user.details.profile?.cover) {
-                newData.cover = user.details.profile.cover;
-            }
-
-            if (user.username) {
-                newData.username = user.username;
-            }
-
-            if (user.details.profile?.description) {
-                newData.description = user.details.profile.description;
-            }
-
-            if(user.details.profile?.data) {
-                newData.data = user.details.profile.data;
-            }
-
-            newData.data['creatorDescription'] = creatorDescription
-
-            const orbisRes = await orbis.updateProfile(newData);
-
-            console.log('Updated Oribs data', orbisRes);
-        }
+        }, user, orbis)
 
         setLoading(false);
         setEditing && setEditing(false); //Close popup
@@ -259,7 +230,7 @@ export const EditMembership = ({ lock, cancelButton = true, border = true, setEd
             status: 'success',
             description: `Membership ${lock ? 'updated' : 'created'}! Please wait a few seconds and reload to reflect changes`
         })
-        //window.location.reload()
+        setTimeout(() => getOrbis(), 1000); //After 1 second to update the membership page
     }
 
     return (
@@ -318,12 +289,13 @@ const EditProfile = (props) => {
     const [profilePicture, setProfilePicture] = useState(null);
     const [cover, setCover] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [draggingPfp, setDraggingPfp] = useState(false);
 
     const client = useWeb3Storage();
     const { user, orbis, getOrbis } = useOrbis();
 
     const handleProfilePicture = (file) => {
-        console.log('Files', file);
+        file.url = URL.createObjectURL(file) //To be able to display on input
         setProfilePicture(file)
     }
 
@@ -335,50 +307,30 @@ const EditProfile = (props) => {
     const handleSave = async () => {
         setSaving(true);
 
-        let newData = {}
-
+        let pfpCid, coverCid;
+        //Upload images
         if (profilePicture) {
-            newData.pfp = await client.put([profilePicture], {
+            pfpCid = await client.put([profilePicture], {
                 wrapWithDirectory: false
             });
 
-            console.log('Stored file with cid:', newData.pfp);
-        } else if (user.details.profile?.pfp) {
-            newData.pfp = user.details.profile.pfp;
+            console.log('Stored file with cid:', pfpCid);
         }
 
         if (cover) {
-            newData.cover = await client.put([cover], {
+            coverCid = await client.put([cover], {
                 wrapWithDirectory: false
             });
 
-            console.log('Stored file with cid:', newData.cover);
-        } else if (user.details.profile?.cover) {
-            newData.cover = user.details.profile.cover;
+            console.log('Stored file with cid:', coverCid);
         }
 
-        if (username != '') {
-            newData.username = username;
-        } else if (user.username) {
-            newData.username = user.username;
-        }
-
-        if (description != '') {
-            newData.description = description;
-        } else if (user.details.profile?.description) {
-            newData.description = user.details.profile.description;
-        }
-
-        console.log('New data', newData);
-
-        const res = await orbis.updateProfile(newData)
-
-        console.log('Orbis response', res);
-
-        if (res.status != 200) {
-            //TODO error handling
-            console.error(res);
-        }
+        await updateOrbisData({
+            pfp: pfpCid ? 'https://' + pfpCid + '.ipfs.w3s.link' : null,
+            cover: coverCid ? 'https://' + coverCid + '.ipfs.w3s.link' : null,
+            username,
+            description
+        }, user, orbis)
 
         setSaving(false);
         getOrbis(); //TODO fix to manually change username in orbis context
@@ -386,16 +338,15 @@ const EditProfile = (props) => {
     }
 
     return (
-        <Flex flexDirection='column' alignItems='center'>
-
+        <Flex flexDirection='column' alignItems='center' userSelect='none'>
             <Flex
+                w='100%'
                 flexDirection='column'
                 borderRadius='7px'
                 backgroundColor='white'
                 my='15px'
                 p='25px'
                 boxShadow='0px 2px 9px 0px rgba(0, 0, 0, 0.25)'
-                w='100%'
             >
                 <Text fontSize='xl' fontWeight='bold'>Customize Profile</Text>
 
@@ -408,23 +359,37 @@ const EditProfile = (props) => {
                         onChange={e => setUsername(e.target.value)}
                     />
                     <FormLabel mt='20px' fontWeight='semibold' textAlign='center'>Profile photo</FormLabel>
-                    <FileUploader handleChange={handleProfilePicture} types={["JPG", "PNG"]}>
-                        <Flex
-                            cursor='pointer'
-                            py='10px'
-                            border='1px solid'
-                            borderColor='brand.500'
-                            borderRadius='10px'
-                            w='50%'
-                            mx='auto'
-                            flexDirection='column'
-                            alignItems='center'
-                            backgroundColor={profilePicture ? 'gray' : 'white'}
-                        >
-                            <Image src='/camera.svg' mb='8px' />
-                            <Text fontWeight='semibold' noOfLines={2} w='60%' color='brand.500' align='center'>Add new profile photo</Text>
-                        </Flex>
-                    </FileUploader>
+
+                    <Flex mx='auto' w='50%'>
+                        <FileUploader setFile={handleProfilePicture} accept='image/*' setDragging={setDraggingPfp}>
+                            <Flex
+                                cursor='pointer'
+                                py='10px'
+                                border='1px solid'
+                                borderColor='brand.500'
+                                borderRadius='10px'
+                                w='100%'
+                                alignSelf='center'
+                                minH='150px'
+                                flexDirection='column'
+                                alignItems='center'
+                                justifyContent='center'
+                                backgroundColor={(profilePicture || draggingPfp) ? 'gray.400' : 'white'}
+                                backgroundImage={profilePicture ? profilePicture.url : null}
+                                backgroundPosition='center'
+                                backgroundSize='cover'
+                            >
+                                <Image src='/camera.svg' mb='10px' />
+                                <Text
+                                    fontWeight='semibold'
+                                    noOfLines={2}
+                                    w='60%'
+                                    color='brand.500'
+                                    align='center'
+                                >{profilePicture ? profilePicture.name : 'Add new profile photo'}</Text>
+                            </Flex>
+                        </FileUploader>
+                    </Flex>
 
                     <FormLabel mt='20px' fontWeight='semibold'>Profile description</FormLabel>
                     <Textarea
@@ -437,23 +402,25 @@ const EditProfile = (props) => {
                     />
                     <FormLabel mt='20px' fontWeight='semibold'>Cover image</FormLabel>
 
-                    <FileUploader handleChange={handleCover} types={["JPG", "PNG"]}>
+                    <FileUploader setFile={handleCover} accept='image/*'>
                         <Flex
                             cursor='pointer'
                             border='1px solid #E6E6E6'
                             borderRadius='10px'
                             p='8px'
-                            w='100%'//'60%'
-                            backgroundColor={cover ? 'gray' : 'white'}
+                            w='100%'
+                            backgroundColor={cover ? 'gray.400' : 'white'}
                         >
                             <Image src='/img.svg' mr='10px' />
-                            Add cover image
+                            {cover ? cover.name : 'Add cover image'}
                         </Flex>
                     </FileUploader>
-
-                    <Text fontSize='sm' color='#848484' mt='5px'>Recommended size 460 by 200 pixels</Text>
+                    {/** TODO fix pixel recommended size
+                        <Text fontSize='sm' color='#848484' mt='5px'>Recommended size XXX by XXX pixels</Text>
+                        */}
                 </FormControl>
             </Flex>
+
             <Flex w='100%' alignItems='center' justifyContent='flex-end'>
                 <Button borderRadius='10px' px='50px' colorScheme='brandLight' color='brand.500' onClick={() => props.setEditing(false)}>Cancel</Button>
                 <Button
