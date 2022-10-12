@@ -127,8 +127,11 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
 
         setPublishing(false);
         setActive(false);
-        emptyData()
-        getPosts && getPosts();
+        emptyData();
+
+        if(getPosts){
+            setTimeout(() => getPosts(), 1000); //Wait 1 sec to getPosts again.
+        } 
     }
 
     const emptyData = () => {
