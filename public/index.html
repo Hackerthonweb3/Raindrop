@@ -3,6 +3,25 @@
 
 <head>
     <script src="../src/index.js"></script>
+    <script>
+        (function (d, s) {
+            var js = d.createElement(s),
+                sc = d.getElementsByTagName(s)[0];
+            js.src = "https://paywall.unlock-protocol.com/static/unlock.latest.min.js";
+            sc.parentNode.insertBefore(js, sc);
+        }(document, "script"));
+    </script>
+
+    <script>
+        var unlockProtocolConfig = {
+            "network": 137, // Network ID (1 is for mainnet, 4 for rinkeby, 100 for xDai, etc) 
+            "locks": {
+                "0x0000000000000000000000000000000000000000": {
+                    "name": "Null Address"
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>

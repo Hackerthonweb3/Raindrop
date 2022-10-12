@@ -113,12 +113,10 @@ const Profile = () => {
                 }
             },
             title: lock.name,
-            pessimistic: true
+            // pessimistic: true
         }
 
-        //TODO change to domain
-        const uri = 'https://app.unlock-protocol.com/checkout?redirectUri=' + 'https://raindrop-gold.vercel.app/' + location.pathname + '&paywallConfig=' + encodeURIComponent(JSON.stringify(paywallConfig));
-        window.location.href = uri;
+        window.unlockProtocol && window.unlockProtocol.loadCheckoutModal(paywallConfig)
     }
 
     const checkVerification = async () => {
@@ -249,9 +247,9 @@ const Profile = () => {
                     borderBottom='1px solid'
                     borderColor='brand.500'
                 >
-                    <Flex mt='15px' flexDirection='column' alignItems='center' position='absolute' left='30px'>
+                    <Flex zIndex={2} mt='15px' flexDirection='column' alignItems='center' position='absolute' left='30px' top='60px'>
                         <Text borderRadius='7px' py='4px' px='8px' border='1px solid' borderColor='brand.500'>{lock ? '$' + ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) : 'N/A'}</Text>
-                        <Text mt='5px' color='#ADADAD'>Per Month</Text>
+                        <Text mt='2px' fontSize='small' color='#ADADAD'>Per Month</Text>
                     </Flex>
 
                     {/*Center profile*/}
@@ -268,17 +266,17 @@ const Profile = () => {
                             </Tooltip>
                         }
                         {lock && <Text>Creator</Text>}
-                        <Text w='100%' align='center' pb='20px'>{user && user.details.profile && user.details.profile.description || "No description found"}</Text>
+                        <Text w='90%' align='center' pb='20px'>{user && user.details.profile && user.details.profile.description || "No description found"}</Text>
                     </Flex>
 
                     {myProfile ?
-                        <Flex mt='15px' flexDirection='column' alignItems='center' position='absolute' right='30px'>
+                        <Flex zIndex={2} mt='15px' flexDirection='column' alignItems='center' position='absolute' right='30px' top='60px'>
                             <Text borderRadius='7px' py='4px' px='8px' border='1px solid' borderColor='brand.500' fontWeight='semibold'>$N/A</Text>
-                            <Text mt='5px' color='#ADADAD'>Earned USDC</Text>
+                            <Text mt='5px' fontSize='small' color='#ADADAD'>Earned USDC</Text>
                         </Flex>
                         :
                         lock && (!balance?.gt(0)) &&
-                        <Flex mt='15px' flexDirection='column' alignItems='center' position='absolute' right='30px'>
+                        <Flex zIndex={2} mt='15px' flexDirection='column' alignItems='center' position='absolute' right='30px' top='60px'>
                             <Button colorScheme='brand' borderRadius='70px' onClick={handleSubscribe}>Subscribe</Button>
                             <Text mt='2px' fontSize='x-small' color='#ADADAD'>On {CHAIN_NAMES[lock.chain]}</Text>
                         </Flex>
