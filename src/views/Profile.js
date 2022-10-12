@@ -40,7 +40,7 @@ const Profile = () => {
     const [verified, setVerified] = useState(false);
     const lock = useLock(user?.details?.profile?.data?.lock || null);
 
-    const { data: balance } = useContractRead({
+    const { data: balance, refetch: refetchBalance } = useContractRead({
         addressOrName: lock?.address,
         contractInterface: abi,
         functionName: 'balanceOf',
@@ -188,6 +188,15 @@ const Profile = () => {
         }
     }, [usingAddress, myUser])
 
+    useEffect(() => {
+        console.log('Adding Listener');
+        window.addEventListener('unlockProtocol.closeModal', async () => {
+            console.log('Refreshing membership');
+            await refetchBalance();
+            getPosts();
+        })
+    }, [])
+
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
             {/*myProfile && !verified &&
@@ -266,7 +275,7 @@ const Profile = () => {
                             </Tooltip>
                         }
                         {lock && <Text>Creator</Text>}
-                        <Text w='90%' align='center' pb='20px'>{user && user.details.profile && user.details.profile.description || "No description found"}</Text>
+                        <Text w='100%' px='10px' align='center' pb='20px'>{user && user.details.profile && user.details.profile.description || "No description found"}</Text>
                     </Flex>
 
                     {myProfile ?
