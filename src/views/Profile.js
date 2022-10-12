@@ -277,7 +277,7 @@ const Profile = () => {
                             <Text mt='5px' color='#ADADAD'>Earned USDC</Text>
                         </Flex>
                         :
-                        lock && (balance?.gt(0)) &&
+                        lock && (!balance?.gt(0)) &&
                         <Flex mt='15px' flexDirection='column' alignItems='center' position='absolute' right='30px'>
                             <Button colorScheme='brand' borderRadius='70px' onClick={handleSubscribe}>Subscribe</Button>
                             <Text mt='2px' fontSize='x-small' color='#ADADAD'>On {CHAIN_NAMES[lock.chain]}</Text>

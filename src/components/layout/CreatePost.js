@@ -2,7 +2,6 @@ import { Flex, Input, Textarea, Text, RadioGroup, Radio, Spacer, Button, Image, 
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useOrbis } from "../../utils/context/orbis";
-import { FileUploader } from "react-drag-drop-files";
 import { useWeb3Storage } from "../../utils/hooks/web3storage";
 import { CHAIN_NAMES, raindropGroup, subgraphURLs } from "../../utils/constants";
 import { useLock } from "../../utils/hooks/subgraphLock";
@@ -11,6 +10,7 @@ import Blockies from 'react-blockies';
 import { getUploadURL, uploadFile } from "../../utils/livepeer";
 import { sendNotification } from "../../utils/epns";
 import { UploadIcon } from "../Icons";
+import FileUploader from "./FileUploader";
 
 const notify = async (username, title, lock, img) => {
     return; //TODO fix
@@ -198,7 +198,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
                     size='md'
                 />
 
-                <FileUploader width='100%' handleChange={handleFile} types={["JPG", "PNG", "GIF", "MP4"]}>
+                <FileUploader setFile={handleFile} accept='images/*'>
                     <Flex
                         my='20px'
                         cursor='pointer'

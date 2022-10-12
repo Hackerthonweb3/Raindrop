@@ -14,15 +14,15 @@ import Home from './views/Home';
 import Explore from './views/Explore';
 import Sidebar from './components/layout/Sidebar'
 import CreatePost from './components/layout/CreatePost';
-import { alchemyProvider } from 'wagmi/providers/alchemy'
+// import { alchemyProvider } from 'wagmi/providers/alchemy'
 import Profile from './views/Profile'
 //const Profile = lazy(() => import('./components/views/Profile'));
 
 const { chains, provider } = configureChains(
   [
     chain.polygon,
-    chain.optimism,
-    chain.goerli,//, chain.kovan, chain.rinkeby, chain.ropsten]
+    // chain.optimism,
+    // chain.goerli,//, chain.kovan, chain.rinkeby, chain.ropsten]
     chain.polygonMumbai
   ],
   [

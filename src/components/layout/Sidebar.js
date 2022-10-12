@@ -134,10 +134,12 @@ const Sidebar = ({ setCreatingPost }) => {
 
             <Spacer />
 
+            {/*
             <Flex alignItems='center' mb='10px' w='100%'>
                 <Switch ml='10px' isChecked={notifications} onChange={handleToggleNotifications} />
                 <Text ml='8px' fontWeight='semibold'>EPNS notifications</Text>
             </Flex>
+            */}
 
             {address && user &&
                 <Flex w='100%' p='10px' alignItems='center' borderBottom='1px solid' borderTop='1px solid' borderColor='brand.500'>
