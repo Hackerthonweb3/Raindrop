@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import formatAddress from "../../utils/formatAddress";
 import Blockies from 'react-blockies';
 import { utils } from "ethers";
-import { LikeIcon } from "../Icons";
+import { LikeIcon, LikeIconFill } from "../Icons";
 
 //isMember is received from when loading from Profile, so we skip the check
 const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
@@ -13,8 +13,9 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
     const [unencrypted, setUnencrypted] = useState();
     const [date, setDate] = useState();
     const [decrypting, setDecrypting] = useState(false);
+    const [liked, setLiked] = useState(false);
 
-    const { orbis } = useOrbis();
+    const { orbis, user } = useOrbis();
     const navigate = useNavigate();
 
     const handleProfileClick = () => {
@@ -23,6 +24,8 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 
     const handleLike = async () => {
         await orbis.react(post.stream_id, 'like')
+        setLiked(true);
+        post.count_likes += 1;
     }
 
     const decryptBody = async () => {
@@ -42,6 +45,18 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
         }
         setDecrypting(false);
     }
+
+    const getReaction = async () => {
+        let { data } = await orbis.getReaction(post.stream_id, user.did);
+
+        if (data && data.type == 'like') {
+            setLiked(true);
+        }
+    }
+
+    useEffect(() => {
+        getReaction();
+    }, [])
 
     useEffect(() => {
         if (post.content.encryptedBody) { // Gated content
@@ -144,8 +159,18 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                     <Image src='/comment.svg' ml='5px' boxSize={3} />
                 </Flex>
                 <Flex alignItems='center' cursor='pointer' onClick={handleLike}>
-                    <Text fontSize='xs' color='brand.500'>{post.count_likes} Likes</Text>
-                    <LikeIcon color='brand.500' ml='5px' boxSize={3} />
+                    {liked
+                        ?
+                        <>
+                            <Text fontSize='xs' color='brand.500'>{post.count_likes == 1 ? post.count_likes + ' Like' : post.count_likes + ' Likes'}</Text>
+                            <LikeIconFill fill='brand.500' ml='5px' boxSize={3} />
+                        </>
+                        :
+                        <>
+                            <Text fontSize='xs' color='brand.500'>{post.count_likes == 1 ? post.count_likes + ' Like' : post.count_likes + ' Likes'}</Text>
+                            <LikeIcon color='brand.500' ml='5px' boxSize={3} />
+                        </>
+                    }
                 </Flex>
             </Flex>
         </Flex>
