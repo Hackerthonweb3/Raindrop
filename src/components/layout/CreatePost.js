@@ -69,7 +69,8 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
         const postData = {
             title: title,
             body: text,
-            context: raindropGroup
+            context: raindropGroup,
+            data: {}
         }
 
         let cid; //Image IPFS
@@ -106,7 +107,7 @@ const CreatePost = ({ withPicture = false, popUp = false, setCreatingPost, getPo
             //Get preview
             const preview = text.substring(0, text.length > 50 ? 30 : Math.floor(text.length * 0.6))
 
-            postData.data = { preview }
+            postData.data.preview = preview
 
             console.log('Post preview', preview);
 
