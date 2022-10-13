@@ -5,6 +5,7 @@ import ProfileChooser from "../components/layout/ProfileChooser";
 import { useOrbis } from "../utils/context/orbis";
 import Blockies from 'react-blockies';
 import { ChatIcon } from "@chakra-ui/icons";
+import formatAddress from "../utils/formatAddress";
 
 const Messages = () => {
 
@@ -60,7 +61,7 @@ const Messages = () => {
             <Flex flexDirection='column' h='100%' alignItems='center' w='30%' minW='250px' maxW='300px' borderRight='1px solid' borderColor='brand.500'>
                 <Button onClick={() => setChoosingRecipients(true)} my='20px'>Start Conversation</Button>
                 {conversations.length > 0 && conversations.map((conv, i) =>
-                    <ConversationPreview key={i} conv={conv} select={() => setSelectedConversation(i)} />
+                    <ConversationPreview selected={selectedConversation == i} key={i} conv={conv} select={() => setSelectedConversation(i)} selfDid={user.did} />
                 )}
             </Flex>
 
@@ -75,18 +76,23 @@ const Messages = () => {
     )
 }
 
-const ConversationPreview = ({ conv, select }) => {
+const ConversationPreview = ({ conv, select, selfDid, selected }) => {
 
-    console.log('Conversation', conv);
+    const [recipientData, setRecipientData] = useState(null);
+
+    useEffect(() => {
+        //TODO implement groups. Right just 1st receipient that's not self
+        setRecipientData(conv.recipients_details.filter(c => c.did != selfDid))
+    }, [])
 
     return (
-        <Flex alignItems='center' w='100%' px='10px' onClick={select} cursor='pointer' userSelect='none'>
-            {conv.recipients_details[0].profile.pfp ?
-                <Image maxH='50px' src={conv.recipients_details[0].profile.pfp} />
+        <Flex py='10px' alignItems='center' w='100%' px='10px' onClick={select} cursor='pointer' userSelect='none' backgroundColor={selected ? 'lightgray' : 'none'}>
+            {recipientData != null && (recipientData[0].profile?.pfp ?
+                <Image maxH='50px' src={recipientData[0].profile.pfp} />
                 :
-                <Blockies seed={utils.getAddress(conv.recipients_details[0].metadata.address)} scale={4} />
-            }
-            <Text fontWeight='bold' fontSize='xl' ml='8px'>{conv.recipients_details[0].profile.username || conv.recipients_details[0].metadata.ensName || conv.recipients_details[0].metadata.address}</Text>
+                <Blockies seed={utils.getAddress(recipientData[0].metadata.address)} scale={5} />
+            )}
+            {recipientData && <Text fontWeight='bold' fontSize='xl' ml='8px'>{recipientData[0].profile?.username || recipientData[0].metadata.ensName || formatAddress(recipientData[0].metadata.address)}</Text>}
         </Flex>
     )
 }
@@ -153,6 +159,7 @@ const Conversation = ({ conversationId }) => {
 
     useEffect(() => {
         setMessages([]);
+        setEncryptedMessages([]);
         getMessages();
         const interval = setInterval(getMessages, 5000); //Check every 5 seconds
         return (() => {
