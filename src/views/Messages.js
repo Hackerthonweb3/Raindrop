@@ -58,7 +58,17 @@ const Messages = () => {
 
     return (
         <Flex w='100%' h='100%' alignItems='center' ml='250px'>
-            <Flex flexDirection='column' h='100%' alignItems='center' w='30%' minW='250px' maxW='300px' borderRight='1px solid' borderColor='brand.500'>
+            <Flex
+                flexDirection='column'
+                h='100%'
+                alignItems='center'
+                w='30%'
+                minW='250px'
+                maxW='300px'
+                overflowY='scroll'
+                borderRight='1px solid'
+                borderColor='brand.500'
+            >
                 <Button onClick={() => setChoosingRecipients(true)} my='20px'>Start Conversation</Button>
                 {conversations.length > 0 && conversations.map((conv, i) =>
                     <ConversationPreview selected={selectedConversation == i} key={i} conv={conv} select={() => setSelectedConversation(i)} selfDid={user.did} />
