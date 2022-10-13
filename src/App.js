@@ -16,6 +16,7 @@ import Sidebar from './components/layout/Sidebar'
 import CreatePost from './components/layout/CreatePost';
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import Profile from './views/Profile'
+import Messages from './views/Messages';
 //const Profile = lazy(() => import('./components/views/Profile'));
 
 const { chains, provider } = configureChains(
@@ -99,6 +100,7 @@ const RoutingWrapper = () => {
               <Route path='/' element={<Home />} />
               <Route path='profile/:profileAddress' element={<Profile />} />
               <Route path='explore' element={<Explore />} />
+              <Route path='messages' element={<Messages />} />
             </Routes>
 
           </Flex>

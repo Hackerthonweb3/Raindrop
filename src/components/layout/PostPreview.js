@@ -68,15 +68,12 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
 
     return (
         <Flex
-            //border='1px solid'
-            //borderColor='brand.500'
             maxW='100%'
             w='100%'
             alignItems='center'
             flexDirection='column'
             boxShadow='0px 4px 4px rgba(0,0,0,0.25)'
             pb='10px'
-        //p='15px'
         >
             <Flex alignItems='center' justifyContent='space-between' w='100%' px='20px' py='15px'>
                 <Flex alignItems='center' cursor='pointer' onClick={handleProfileClick}>

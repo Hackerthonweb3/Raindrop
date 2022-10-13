@@ -30,7 +30,8 @@ const Home = () => {
     return (
         <Flex w='100%' h='100%' alignItems='center' flexDirection='column' ml='250px'>
             <Flex
-                w='55%'
+                w='60%'
+                minW='450px'
                 alignItems='center'
                 flexDirection='column'
                 border='1px solid'
@@ -40,8 +41,8 @@ const Home = () => {
                 <Flex borderBottom='1px solid' borderColor='brand.500' w='100%'>
                     <Text fontWeight='bold' pl='30px' py='10px' color='brand.500' fontSize='2xl'>HOME</Text>
                 </Flex>
-                <CreatePost withPicture getPosts={getPosts}/>
-                {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post}/>)}
+                <CreatePost withPicture getPosts={getPosts} />
+                {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} />)}
             </Flex>
 
         </Flex>
@@ -49,15 +50,3 @@ const Home = () => {
 }
 
 export default Home;
-
-
-/*const test = async () => { //Used to create Raindrop group
-    console.log('Creating group')
-    const res = await orbis.createGroup({
-        name: 'Raindrop',
-        description: 'Raindrop is a decentralized creators platform',
-        pfp: 'bafkreihb2byalwwpa2lj7l7skz4klovxvciro56qht25bxij75zgmn7klu'
-    })
-
-    console.log('Group res', res);
-}*/

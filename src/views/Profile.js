@@ -117,6 +117,11 @@ const Profile = () => {
         }
 
         window.unlockProtocol && window.unlockProtocol.loadCheckoutModal(paywallConfig)
+
+        //TODO check if paid
+
+        //Set following in orbis to true;
+        await orbis.setFollow(user.did, true);
     }
 
     const checkVerification = async () => {
