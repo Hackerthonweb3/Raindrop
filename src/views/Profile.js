@@ -17,6 +17,7 @@ import formatAddress from "../utils/formatAddress";
 import Minting from "../components/layout/Minting";
 import { AddIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import { updateOrbisData } from "../utils/updateOrbisData";
+import { handleSubscribe } from "../utils/subscribe";
 // import { WorldIDWidget } from "@worldcoin/id";
 //import { getNotifications, sendNotification, turnOnNotifications } from "../../utils/epns";
 
@@ -93,35 +94,6 @@ const Profile = () => {
         })
 
         setPosts(data);
-    }
-
-    const handleSubscribe = async () => {
-        //Change to Creator's lock chain
-        if (chain.id != lock.chain) {
-            await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x' + lock.chain.toString(16) }]
-            })
-        }
-
-        const paywallConfig = {
-            locks: {
-                [lock.address]: {
-                    network: Number(lock.chain),
-                    persistentCheckout: false
-                    // recurringPayments: 1
-                }
-            },
-            title: lock.name,
-            // pessimistic: true
-        }
-
-        window.unlockProtocol && window.unlockProtocol.loadCheckoutModal(paywallConfig)
-
-        //TODO check if paid
-
-        //Set following in orbis to true;
-        await orbis.setFollow(user.did, true);
     }
 
     const checkVerification = async () => {
@@ -291,7 +263,7 @@ const Profile = () => {
                         :
                         lock && (!balance?.gt(0)) &&
                         <Flex zIndex={2} mt='15px' flexDirection='column' alignItems='center' position='absolute' right='30px' top='60px'>
-                            <Button colorScheme='brand' borderRadius='70px' onClick={handleSubscribe}>Subscribe</Button>
+                            <Button colorScheme='brand' borderRadius='70px' onClick={() => handleSubscribe(lock, orbis, user)}>Subscribe</Button>
                             <Text mt='2px' fontSize='x-small' color='#ADADAD'>On {CHAIN_NAMES[lock.chain]}</Text>
                         </Flex>
                     }
@@ -313,7 +285,7 @@ const Profile = () => {
                     <div style={{ width: '100%' }}>
                         {myProfile && <CreatePost lock={lock} getPosts={getPosts} />}
 
-                        {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} isMember={balance?.gt(0)} handleSubscribe={handleSubscribe} price={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) : null} />)}
+                        {posts.length > 0 && posts.map((post, i) => <PostPreview key={i} post={post} isMember={balance?.gt(0)} price={lock ? ethers.utils.formatUnits(lock.price, DECIMALS[lock.chain]) : null} />)}
                     </div>
                 }
 
@@ -351,7 +323,6 @@ const Profile = () => {
                             creatorDescription={user && user.details?.profile?.data?.creatorDescription}
                             member={balance?.gt(0)}
                             exclusivePostCount={posts.filter(p => p.content.encryptedBody).length}
-                            handleSubscribe={handleSubscribe}
                         />
                     )
                 }

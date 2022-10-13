@@ -7,9 +7,10 @@ import Blockies from 'react-blockies';
 import { utils } from "ethers";
 import { LikeIcon, LikeIconFill } from "../Icons";
 import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
+import { handleSubscribe } from "../../utils/subscribe";
 
 //isMember is received from when loading from Profile, so we skip the check
-const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
+const PostPreview = ({ post, isMember, price }) => {
 
     const [unencrypted, setUnencrypted] = useState();
     const [date, setDate] = useState();
@@ -125,7 +126,7 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                         <Flex w='50%' position='absolute' flexDirection='column' top='10%'>
                             <Image src='/lock.svg' h='60px' />
                             <Text textShadow='1px 1px #000' mt='10px' color='white' align='center' fontWeight='bold' fontSize='large'>Unlock this post by becoming a member</Text>
-                            {price && handleSubscribe && <Button onClick={handleSubscribe} mt='15px' size='sm' colorScheme='brand'>{`Join now for  $${price} per month`}</Button>}
+                            <Button onClick={() => handleSubscribe(post.creator_details?.profile?.data?.lock, orbis, user)} mt='15px' size='sm' colorScheme='brand'>Subscribe to unlock</Button>
                         </Flex>
                     }
                 </Flex>
@@ -136,8 +137,8 @@ const PostPreview = ({ post, isMember, price, handleSubscribe }) => {
                 <Text fontSize='xs' color='#AEAEAE'>{date?.toLocaleDateString()}</Text>
                 <Flex position='absolute' right='15px' alignItems='center'>
                     {post.content?.encryptedBody && (unencrypted
-                        ? <UnlockIcon boxSize={2} color='rgba(0, 0, 0, 0.5)'/>
-                        : <LockIcon boxSize={2} color='rgba(0, 0, 0, 0.5)'/>
+                        ? <UnlockIcon boxSize={2} color='rgba(0, 0, 0, 0.5)' />
+                        : <LockIcon boxSize={2} color='rgba(0, 0, 0, 0.5)' />
                     )}
                     <Text ml='3px' fontSize='xs' color='rgba(0, 0, 0, 0.7)'>{post.content.encryptedBody ? (unencrypted ? 'Unlocked' : 'Locked') : 'Public Post'}</Text>
                 </Flex>

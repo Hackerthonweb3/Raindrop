@@ -1,7 +1,11 @@
 import { Flex, Text, Image, Button } from "@chakra-ui/react";
 import { CHAIN_NAMES } from "../../utils/constants";
+import { useOrbis } from "../../utils/context/orbis";
+import { handleSubscribe } from "../../utils/subscribe";
 
-const Membership = ({ self = false, price, username, lock, creatorDescription, member = false, handleSubscribe, exclusivePostCount }) => {
+const Membership = ({ self = false, price, username, lock, creatorDescription, member = false, exclusivePostCount }) => {
+
+    const {orbis, user} = useOrbis();
 
     if (lock) {
         return (
@@ -12,7 +16,7 @@ const Membership = ({ self = false, price, username, lock, creatorDescription, m
                 <Text fontSize='xs' color='#505050B2'>PER MONTH</Text>
                 {lock && <Text>On {CHAIN_NAMES[lock.chain]}</Text>}
 
-                {!self && lock && !member && <Button onClick={handleSubscribe} mt='20px' borderRadius='25px' px='40px' colorScheme='brandLight' color='brand.500'>Subscribe for ${price}/month</Button>}
+                {!self && lock && !member && <Button onClick={() => handleSubscribe(lock, orbis, user)} mt='20px' borderRadius='25px' px='40px' colorScheme='brandLight' color='brand.500'>Subscribe for ${price}/month</Button>}
                 <Text mt='20px' fontSize='2xl' fontWeight='bold'>About {username}</Text>
                 <Text align='center' px='20px'>{creatorDescription}</Text>
 
